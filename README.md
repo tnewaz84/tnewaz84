@@ -1,10 +1,8 @@
-Tanvir Newaz — Official Repository
-Welcome to the official GitHub repository for Tanvir Newaz!
+Tanvir Newaz — Official Repository Welcome to the official GitHub repository for Tanvir Newaz!
 
 🌐 Visit the full portfolio and wiki: https://tanvir-newaz.wiki
 
-📖 About
-Tanvir Newaz is a Digital Growth Architect specializing in:
+📖 About Tanvir Newaz is a Digital Growth Architect specializing in:
 
 Web Development
 
@@ -22,16 +20,7 @@ This repository serves as a hub for accessing all of Tanvir’s works, projects,
 
 🚀 Projects and Areas of Expertise
 
-Project Type	Description
-Web Development	High-converting websites and applications for brands, businesses, and startups.
-SEO and Organic Growth	SEO strategies to rank businesses consistently on Google’s top 3 results.
-Blockchain Applications	Platforms on Binance Smart Chain, Web3 integrations, and decentralized solutions.
-Cybersecurity	SecureShield — offering cybersecurity services for individuals, SMEs, and enterprises.
-App Development	Location-based dating apps, custom client platforms, and blockchain-based services.
-Game Development	Athena’s Realm — A modern-themed, mythology-inspired strategic game for all ages.
-Live Streaming Innovations	Blockchain-enabled radio stations with Livepeer and Ninjam integration.
-📂 Contents
-projects/ – Highlights of major personal and client projects.
+Project Type Description Web Development High-converting websites and applications for brands, businesses, and startups. SEO and Organic Growth SEO strategies to rank businesses consistently on Google’s top 3 results. Blockchain Applications Platforms on Binance Smart Chain, Web3 integrations, and decentralized solutions. Cybersecurity SecureShield — offering cybersecurity services for individuals, SMEs, and enterprises. App Development Location-based dating apps, custom client platforms, and blockchain-based services. Game Development Athena’s Realm — A modern-themed, mythology-inspired strategic game for all ages. Live Streaming Innovations Blockchain-enabled radio stations with Livepeer and Ninjam integration. 📂 Contents projects/ – Highlights of major personal and client projects.
 
 case-studies/ – In-depth studies showing strategies, implementations, and results.
 
@@ -41,9 +30,7 @@ collaborations/ – Joint ventures and collaborations with other creators and co
 
 roadmap/ – Upcoming projects, updates, and future plans.
 
-🧠 Knowledge Base
-Everything Tanvir Newaz has learned, developed, and documented is available at:
-➡️ https://tanvir-newaz.wiki
+🧠 Knowledge Base Everything Tanvir Newaz has learned, developed, and documented is available at: ➡️ https://tanvir-newaz.wiki
 
 It includes:
 
@@ -57,13 +44,10 @@ Documentation of Experiments
 
 Business Growth Blueprints
 
-🤝 Let's Collaborate
-Interested in working together? Have a crazy idea that needs real-world execution?
-Reach out today via Tanvir Newaz Wiki Contact Form or connect on:
+🤝 Let's Collaborate Interested in working together? Have a crazy idea that needs real-world execution? Reach out today via Tanvir Newaz Wiki Contact Form or connect on:
 
 LinkedIn: linkedin.com/in/tanvir-newaz
 
 Twitter (X): twitter.com/tnewaz84
 
 GitHub: github.com/tnewaz84
-
