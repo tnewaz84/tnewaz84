@@ -40,40 +40,7 @@ export default function Page() {
 
   return (
     <main className="min-h-screen bg-black text-white">
-      <Hero showAuthButtons={true}>
-        <div className="max-w-4xl px-4 opacity-0 animate-[fadeIn_0.5s_ease-in-out_forwards]">
-          <h1 className="mb-4 md:mb-6 text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tighter leading-tight opacity-0 animate-[fadeIn_0.5s_ease-in-out_forwards]">
-            {isMobile ? (
-              <>
-                <span className="block mb-2">Tanvir Newaz,</span>
-                <span className="block mb-2">Google Certified</span>
-                <span className="block mb-2">Project Manager &</span>
-                <span className="block">SEO Specialist</span>
-              </>
-            ) : (
-              "Tanvir Newaz, Google Certified Project Manager and Data-Driven SEO Specialist"
-            )}
-          </h1>
-          <p className="max-w-[600px] mx-auto text-base md:text-lg lg:text-xl text-gray-400 opacity-0 animate-[fadeIn_0.5s_ease-in-out_0.2s_forwards]">
-            The Digital Growth Architect
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center mt-6 md:mt-8 opacity-0 animate-[fadeIn_0.5s_ease-in-out_0.3s_forwards]">
-            <Link
-              href="/forum/register"
-              className="bg-white text-black px-5 py-2.5 md:px-6 md:py-3 rounded-md font-medium hover:bg-white/90 transition-colors text-sm md:text-base"
-            >
-              Register
-            </Link>
-            <Link
-              href="/forum/login"
-              className="border border-white text-white px-5 py-2.5 md:px-6 md:py-3 rounded-md font-medium hover:bg-white/10 transition-colors text-sm md:text-base"
-            >
-              Login
-            </Link>
-          </div>
-        </div>
-      </Hero>
+      <Hero showAuthButtons={true} />
 
       {/* Marketing Sections */}
       <section className="py-10 md:py-16 bg-zinc-900">
@@ -221,4 +188,3 @@ export default function Page() {
     </main>
   )
 }
-

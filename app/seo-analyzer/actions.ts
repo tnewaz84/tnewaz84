@@ -269,4 +269,3 @@ function generateSimulatedResults(url: string) {
     nextSteps,
   }
 }
-

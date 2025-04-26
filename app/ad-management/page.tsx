@@ -10,4 +10,3 @@ export const metadata: Metadata = {
 export default function AdManagementPage() {
   return <AdManagementClientPage />
 }
-

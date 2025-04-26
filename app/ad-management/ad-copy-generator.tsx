@@ -380,4 +380,3 @@ ${adCopy.cta}
     </div>
   )
 }
-

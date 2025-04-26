@@ -328,4 +328,3 @@ export default function PostDetail({ postId }: { postId: string }) {
     </div>
   )
 }
-

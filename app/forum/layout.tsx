@@ -14,4 +14,3 @@ export default function ForumLayout({
 }) {
   return <AuthProvider>{children}</AuthProvider>
 }
-

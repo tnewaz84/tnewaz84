@@ -9,4 +9,3 @@ export const metadata: Metadata = {
 export default function Page({ params }: { params: { slug: string } }) {
   return <BlogPostPage slug={params.slug} />
 }
-

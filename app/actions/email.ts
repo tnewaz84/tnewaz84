@@ -123,4 +123,3 @@ export async function sendEmail(data: {
     return { success: false, error: "Failed to send email" }
   }
 }
-

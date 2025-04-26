@@ -44,4 +44,3 @@ export async function disconnectFromServer() {
     return { success: false, error: "Failed to disconnect from Ninjam server." }
   }
 }
-

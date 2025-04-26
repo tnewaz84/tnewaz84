@@ -46,4 +46,3 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
     <ScrollContext.Provider value={{ scrollY, scrollDirection, scrollProgress }}>{children}</ScrollContext.Provider>
   )
 }
-

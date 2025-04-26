@@ -184,4 +184,3 @@ export default function Hero({ children, height = "100vh", fullScreen = true, sh
     </div>
   )
 }
-

@@ -348,4 +348,3 @@ function isStopWord(word: string): boolean {
 
   return stopWords.has(word.toLowerCase())
 }
-

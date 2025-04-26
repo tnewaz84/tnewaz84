@@ -548,4 +548,3 @@ export default function SearchConsoleAnalyzerTool() {
     </div>
   )
 }
-

@@ -61,4 +61,3 @@ export type ChatMessage = {
   username?: string
   avatar_url?: string
 }
-

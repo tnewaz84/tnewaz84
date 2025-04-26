@@ -506,4 +506,3 @@ export function BlockchainCalculator() {
     </Card>
   )
 }
-

@@ -119,4 +119,3 @@ function generateSolution(companyName: string, keywords: string[]): string {
 function generateCTA(companyName: string, phoneNumber: string, companyUrl: string): string {
   return `Ready to transform your ${companyName} advertising results? Call us today at ${phoneNumber} or visit ${companyUrl} to schedule your free strategy session. Don't let another day of ineffective advertising eat into your profits.`
 }
-
