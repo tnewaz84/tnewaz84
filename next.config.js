@@ -1,5 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Your existing configuration
+
+  // Ensure static files are served correctly
+  reactStrictMode: true,
+  swcMinify: true,
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -11,4 +16,4 @@ const nextConfig = {
   },
 }
 
-export default nextConfig
+module.exports = nextConfig
