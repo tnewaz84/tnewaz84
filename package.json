@@ -59,10 +59,13 @@
     "vaul": "^0.9.6",
     "zod": "latest",
     "@emotion/is-prop-valid": "latest",
+    "pg-native": "latest",
     "framer-motion": "latest",
     "papaparse": "latest",
     "@supabase/supabase-js": "latest",
-    "html2canvas": "latest"
+    "html2canvas": "latest",
+    "pg": "latest",
+    "@upstash/redis": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",

@@ -13,10 +13,19 @@ interface HeroProps {
   height?: string
   fullScreen?: boolean
   showAuthButtons?: boolean
+  backgroundImage?: string
+  backgroundImageAlt?: string
 }
 
-// Update the function signature to include the new prop with a default value of false
-export default function Hero({ children, height = "100vh", fullScreen = true, showAuthButtons = false }: HeroProps) {
+// Update the function signature to include the new props
+export default function Hero({
+  children,
+  height = "100vh",
+  fullScreen = true,
+  showAuthButtons = false,
+  backgroundImage = "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/coverletter.jpg-WHIEHshELtJoa4Silh1zNgawy2WLxh.jpeg",
+  backgroundImageAlt = "Tanvir Newaz background image",
+}: HeroProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [isMounted, setIsMounted] = useState(false)
   const { scrollProgress } = useScroll()
@@ -117,14 +126,16 @@ export default function Hero({ children, height = "100vh", fullScreen = true, sh
       <div
         className="absolute inset-0 bg-center bg-cover"
         style={{
-          backgroundImage: `url(https://hebbkx1anhila5yf.public.blob.vercel-storage.com/coverletter.jpg-WHIEHshELtJoa4Silh1zNgawy2WLxh.jpeg)`,
+          backgroundImage: `url(${backgroundImage})`,
           opacity: 0.15,
           transform: `translateY(${parallaxY * 0.5}px)`,
         }}
+        role="img"
+        aria-label={backgroundImageAlt}
       ></div>
 
       {/* Particle animation canvas */}
-      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full bg-transparent"></canvas>
+      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full bg-transparent" aria-hidden="true"></canvas>
 
       {/* Content with parallax effect */}
       <div
