@@ -73,8 +73,8 @@
     "@react-three/drei": "latest",
     "react-color": "latest",
     "https": "latest",
-    "@upstash/redis": "latest",
-    "@vercel/postgres": "latest"
+    "@vercel/postgres": "latest",
+    "@upstash/redis": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",

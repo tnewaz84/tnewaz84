@@ -2,16 +2,22 @@
 
 class SafeRedisClient {
   private isConfigured: boolean
+  private redisUrl: string
+  private redisToken: string
 
   constructor() {
     // Check if Redis is properly configured
-    const redisUrl = process.env.UPSTASH_REDIS_URL
-    const redisToken = process.env.KV_REST_API_TOKEN
+    this.redisUrl = process.env.UPSTASH_REDIS_URL || ""
+    this.redisToken = process.env.KV_REST_API_TOKEN || ""
 
-    this.isConfigured = !!(redisUrl && redisToken && redisUrl.startsWith("https://"))
+    // Validate URL format
+    this.isConfigured = !!(this.redisUrl && this.redisToken && this.redisUrl.startsWith("https://"))
 
     if (!this.isConfigured) {
       console.warn("Redis is not properly configured. Using fallback implementation.")
+      if (this.redisUrl && !this.redisUrl.startsWith("https://")) {
+        console.error(`Invalid Redis URL format: ${this.redisUrl.substring(0, 10)}... (URL should start with https://)`)
+      }
     }
   }
 
@@ -23,7 +29,12 @@ class SafeRedisClient {
     }
 
     try {
-      const { redis } = await import("./redis")
+      // Only import the real Redis client if we have a valid configuration
+      const { Redis } = await import("@upstash/redis")
+      const redis = new Redis({
+        url: this.redisUrl,
+        token: this.redisToken,
+      })
       return redis.get(key)
     } catch (error) {
       console.error("Redis get error:", error)
@@ -38,7 +49,11 @@ class SafeRedisClient {
     }
 
     try {
-      const { redis } = await import("./redis")
+      const { Redis } = await import("@upstash/redis")
+      const redis = new Redis({
+        url: this.redisUrl,
+        token: this.redisToken,
+      })
       return redis.set(key, value, options)
     } catch (error) {
       console.error("Redis set error:", error)
@@ -53,7 +68,11 @@ class SafeRedisClient {
     }
 
     try {
-      const { redis } = await import("./redis")
+      const { Redis } = await import("@upstash/redis")
+      const redis = new Redis({
+        url: this.redisUrl,
+        token: this.redisToken,
+      })
       return redis.del(key)
     } catch (error) {
       console.error("Redis del error:", error)
@@ -68,7 +87,11 @@ class SafeRedisClient {
     }
 
     try {
-      const { redis } = await import("./redis")
+      const { Redis } = await import("@upstash/redis")
+      const redis = new Redis({
+        url: this.redisUrl,
+        token: this.redisToken,
+      })
       return redis.hset(hash, values)
     } catch (error) {
       console.error("Redis hset error:", error)
@@ -83,7 +106,11 @@ class SafeRedisClient {
     }
 
     try {
-      const { redis } = await import("./redis")
+      const { Redis } = await import("@upstash/redis")
+      const redis = new Redis({
+        url: this.redisUrl,
+        token: this.redisToken,
+      })
       return redis.hget(hash, key)
     } catch (error) {
       console.error("Redis hget error:", error)
@@ -98,7 +125,11 @@ class SafeRedisClient {
     }
 
     try {
-      const { redis } = await import("./redis")
+      const { Redis } = await import("@upstash/redis")
+      const redis = new Redis({
+        url: this.redisUrl,
+        token: this.redisToken,
+      })
       return redis.ping()
     } catch (error) {
       console.error("Redis ping error:", error)

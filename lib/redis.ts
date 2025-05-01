@@ -1,58 +1,33 @@
-import { Redis } from "@upstash/redis"
+// This file is a wrapper around the Redis client that avoids initialization during build
+// It exports the same interface as the real Redis client, but defers initialization until runtime
 
-// Create Redis client using environment variables
-const redisUrl = process.env.UPSTASH_REDIS_URL || ""
-const redisToken = process.env.KV_REST_API_TOKEN || ""
+// Export the safe Redis client and helper functions
+export {
+  safeRedis as redis,
+  getCache,
+  setCache,
+  deleteCache,
+  getFromCache,
+  setInCache,
+  deleteFromCache,
+} from "./redis-safe"
 
-// Validate Redis URL format
-if (redisUrl && !redisUrl.startsWith("https://")) {
-  console.warn("Invalid Redis URL format. URL should start with https://")
-}
-
-export const redis = new Redis({
-  url: redisUrl,
-  token: redisToken,
-})
-
-// Helper functions for common Redis operations
-export async function setCache(key: string, value: any, expireSeconds?: number): Promise<string> {
-  if (expireSeconds) {
-    return redis.set(key, JSON.stringify(value), { ex: expireSeconds })
-  }
-  return redis.set(key, JSON.stringify(value))
-}
-
-export async function getCache<T>(key: string): Promise<T | null> {
-  const data = await redis.get<string>(key)
-  if (!data) return null
-  try {
-    return JSON.parse(data) as T
-  } catch (error) {
-    console.error(`Error parsing Redis data for key ${key}:`, error)
-    return null
-  }
-}
-
-export async function deleteCache(key: string): Promise<number> {
-  return redis.del(key)
-}
-
+// Export additional functions that might be used elsewhere
 export async function setCacheWithHash(hash: string, key: string, value: any): Promise<number> {
-  return redis.hset(hash, { [key]: JSON.stringify(value) })
+  const { safeRedis } = await import("./redis-safe")
+  const valueToStore = typeof value === "string" ? value : JSON.stringify(value)
+  return safeRedis.hset(hash, { [key]: valueToStore })
 }
 
 export async function getCacheFromHash<T>(hash: string, key: string): Promise<T | null> {
-  const data = await redis.hget<string>(hash, key)
+  const { safeRedis } = await import("./redis-safe")
+  const data = await safeRedis.hget(hash, key)
   if (!data) return null
+
   try {
-    return JSON.parse(data) as T
+    return typeof data === "string" ? (JSON.parse(data) as T) : (data as T)
   } catch (error) {
     console.error(`Error parsing Redis hash data for ${hash}:${key}:`, error)
     return null
   }
 }
-
-// Alias functions for backward compatibility
-export const getFromCache = getCache
-export const setInCache = setCache
-export const deleteFromCache = deleteCache
