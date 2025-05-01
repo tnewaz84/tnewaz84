@@ -1,34 +1,52 @@
-import { createClient } from "@vercel/postgres"
+import { Pool } from "pg"
 
-// Create a client that doesn't require native compilation
-export const postgresClient = createClient()
+// Create a connection pool
+let pool: Pool | null = null
 
-// Function to query the database
-export async function queryDatabase(query: string, params: any[] = []) {
+export function getPool() {
+  if (!pool) {
+    const connectionString = process.env.POSTGRES_URL || process.env.DIRECT_POSTGRES_URL
+
+    if (!connectionString) {
+      throw new Error("Database connection string is not defined")
+    }
+
+    pool = new Pool({
+      connectionString,
+      ssl: {
+        rejectUnauthorized: false,
+      },
+      max: 20,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 2000,
+    })
+  }
+
+  return pool
+}
+
+// Helper function to execute queries with error handling
+export async function query(text: string, params?: any[]) {
+  const pool = getPool()
+
   try {
-    const result = await postgresClient.query(query, params)
-    return { success: true, data: result.rows }
+    const start = Date.now()
+    const result = await pool.query(text, params)
+    const duration = Date.now() - start
+
+    console.log("Executed query", { text, duration, rows: result.rowCount })
+
+    return result
   } catch (error) {
     console.error("Database query error:", error)
-    return { success: false, error: (error as Error).message }
+    throw error
   }
 }
 
-// Function to test the database connection
-export async function testDatabaseConnection() {
-  try {
-    const result = await postgresClient.query("SELECT NOW() as current_time")
-    return {
-      success: true,
-      message: "Database connection successful!",
-      timestamp: result.rows[0].current_time,
-    }
-  } catch (error) {
-    console.error("Database connection error:", error)
-    return {
-      success: false,
-      message: "Database connection failed",
-      error: (error as Error).message,
-    }
+// Helper function to safely close the pool
+export async function closePool() {
+  if (pool) {
+    await pool.end()
+    pool = null
   }
 }

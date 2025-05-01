@@ -3,7 +3,7 @@ import PublicationPoliciesContent from "./publication-policies-content"
 
 export const metadata: Metadata = {
   title: "Publication Policies | Tanvir Newaz",
-  description: "Our publication policies ensure accuracy, transparency, and fairness in all content.",
+  description: "Our publication policies and guidelines for content creation, submission, and editorial standards.",
 }
 
 export default function PublicationPoliciesPage() {

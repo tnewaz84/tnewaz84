@@ -66,16 +66,16 @@
     "react-native": "latest",
     "three": "latest",
     "@react-three/fiber": "latest",
+    "pg-native": "latest",
     "framer-motion": "latest",
     "@supabase/supabase-js": "latest",
     "html2canvas": "latest",
-    "@upstash/redis": "latest",
-    "@vercel/postgres": "latest",
     "papaparse": "latest",
-    "@ai-sdk/groq": "latest",
-    "ai": "latest",
     "@react-three/drei": "latest",
-    "react-color": "latest"
+    "react-color": "latest",
+    "@upstash/redis": "latest",
+    "pg": "latest",
+    "https": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",

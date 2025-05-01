@@ -1,45 +1,46 @@
 import { Redis } from "@upstash/redis"
 
-// Create Redis client using environment variables
+if (!process.env.UPSTASH_REDIS_URL) {
+  throw new Error("UPSTASH_REDIS_URL is not defined")
+}
+
 export const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_URL || "",
-  token: process.env.UPSTASH_REDIS_TOKEN || "",
+  url: process.env.UPSTASH_REDIS_URL,
+  token: process.env.KV_REST_API_TOKEN || "",
 })
 
-// Helper functions for common Redis operations
-export async function setCache(key: string, value: any, expireSeconds?: number): Promise<string> {
-  if (expireSeconds) {
-    return redis.set(key, JSON.stringify(value), { ex: expireSeconds })
-  }
-  return redis.set(key, JSON.stringify(value))
-}
-
-export async function getCache<T>(key: string): Promise<T | null> {
-  const data = await redis.get<string>(key)
-  if (!data) return null
+// Helper function to safely get data from Redis with error handling
+export async function getFromCache<T>(key: string): Promise<T | null> {
   try {
-    return JSON.parse(data) as T
+    return await redis.get(key)
   } catch (error) {
-    console.error(`Error parsing Redis data for key ${key}:`, error)
+    console.error("Redis get error:", error)
     return null
   }
 }
 
-export async function deleteCache(key: string): Promise<number> {
-  return redis.del(key)
-}
-
-export async function setCacheWithHash(hash: string, key: string, value: any): Promise<number> {
-  return redis.hset(hash, { [key]: JSON.stringify(value) })
-}
-
-export async function getCacheFromHash<T>(hash: string, key: string): Promise<T | null> {
-  const data = await redis.hget<string>(hash, key)
-  if (!data) return null
+// Helper function to safely set data in Redis with error handling
+export async function setInCache(key: string, value: any, expireInSeconds?: number): Promise<boolean> {
   try {
-    return JSON.parse(data) as T
+    if (expireInSeconds) {
+      await redis.set(key, value, { ex: expireInSeconds })
+    } else {
+      await redis.set(key, value)
+    }
+    return true
   } catch (error) {
-    console.error(`Error parsing Redis hash data for ${hash}:${key}:`, error)
-    return null
+    console.error("Redis set error:", error)
+    return false
+  }
+}
+
+// Helper function to safely delete data from Redis with error handling
+export async function deleteFromCache(key: string): Promise<boolean> {
+  try {
+    await redis.del(key)
+    return true
+  } catch (error) {
+    console.error("Redis delete error:", error)
+    return false
   }
 }

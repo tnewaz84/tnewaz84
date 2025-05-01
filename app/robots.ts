@@ -1,13 +1,14 @@
 import type { MetadataRoute } from "next"
-import { BASE_URL } from "./lib/constants"
 
 export default function robots(): MetadataRoute.Robots {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tanvirnewaz.com"
+
   return {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/api/", "/admin/", "/_next/"],
+      disallow: ["/api/*", "/admin/*"],
     },
-    sitemap: [`${BASE_URL}/sitemap.xml`, `${BASE_URL}/api/sitemap`],
+    sitemap: `${baseUrl}/sitemap.xml`,
   }
 }
