@@ -20,7 +20,8 @@ export async function GET() {
       hasRedisUrl: !!process.env.UPSTASH_REDIS_URL,
       hasRedisToken: !!process.env.KV_REST_API_TOKEN,
       hasGroqApiKey: !!process.env.GROQ_API_KEY,
-      hasPostgresUrl: !!process.env.POSTGRES_URL || !!process.env.DIRECT_POSTGRES_URL,
+      hasPostgresUrl:
+        !!process.env.POSTGRES_URL || !!process.env.POSTGRES_URL_NON_POOLING || !!process.env.DIRECT_POSTGRES_URL,
     },
   }
 
@@ -50,13 +51,15 @@ export async function GET() {
     }
   }
 
-  // Check Postgres connection - simplified to avoid import errors
+  // Check Postgres connection - with better error handling
   try {
-    if (process.env.POSTGRES_URL || process.env.DIRECT_POSTGRES_URL) {
-      const { createClient } = await import("@vercel/postgres")
-      const client = createClient()
-      const result = await client.query("SELECT NOW()")
-      healthStatus.services.postgres = { status: "ok", error: null }
+    if (process.env.POSTGRES_URL || process.env.POSTGRES_URL_NON_POOLING || process.env.DIRECT_POSTGRES_URL) {
+      const { testDatabaseConnection } = await import("@/lib/postgres")
+      const result = await testDatabaseConnection()
+      healthStatus.services.postgres = {
+        status: result.success ? "ok" : "error",
+        error: result.success ? null : result.error,
+      }
     } else {
       healthStatus.services.postgres = {
         status: "not_configured",

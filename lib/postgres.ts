@@ -1,12 +1,39 @@
 import { createClient } from "@vercel/postgres"
 
-// Create a client that doesn't require native compilation
-export const postgresClient = createClient()
+// Create a client that handles missing environment variables
+export function getPostgresClient() {
+  // Check if we have the required environment variables
+  const connectionString =
+    process.env.POSTGRES_URL || process.env.POSTGRES_URL_NON_POOLING || process.env.DIRECT_POSTGRES_URL
+
+  if (!connectionString) {
+    throw new Error("Database connection string is not defined")
+  }
+
+  // Create the client with the connection string
+  return createClient({ connectionString })
+}
+
+// Lazy-loaded client to avoid initialization errors
+let postgresClient: ReturnType<typeof createClient> | null = null
+
+export function getClient() {
+  if (!postgresClient) {
+    try {
+      postgresClient = getPostgresClient()
+    } catch (error) {
+      console.error("Failed to initialize Postgres client:", error)
+      throw error
+    }
+  }
+  return postgresClient
+}
 
 // Function to query the database
 export async function queryDatabase(query: string, params: any[] = []) {
   try {
-    const result = await postgresClient.query(query, params)
+    const client = getClient()
+    const result = await client.query(query, params)
     return { success: true, data: result.rows }
   } catch (error) {
     console.error("Database query error:", error)
@@ -17,7 +44,8 @@ export async function queryDatabase(query: string, params: any[] = []) {
 // Function to test the database connection
 export async function testDatabaseConnection() {
   try {
-    const result = await postgresClient.query("SELECT NOW() as current_time")
+    const client = getClient()
+    const result = await client.query("SELECT NOW() as current_time")
     return {
       success: true,
       message: "Database connection successful!",
@@ -35,10 +63,10 @@ export async function testDatabaseConnection() {
 
 // Helper functions for common database operations
 export async function query(text: string, params?: any[]) {
-  const pool = postgresClient
   try {
+    const client = getClient()
     const start = Date.now()
-    const result = await pool.query(text, params)
+    const result = await client.query(text, params)
     const duration = Date.now() - start
     console.log("Executed query", { text, duration, rows: result.rowCount })
     return result
