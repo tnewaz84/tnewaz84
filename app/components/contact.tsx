@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { ScrollAnimation } from "./scroll-animation"
 import { submitContactForm } from "../actions/contact"
 import { sendEmail } from "../actions/email"
+import CalendlyBooking from "./calendly-booking"
 
 // Form schema for validation
 const formSchema = z.object({
@@ -43,6 +44,7 @@ export default function Contact() {
       bookingSection: "",
       message: "",
     },
+    mode: "onBlur", // Add explicit mode to prevent resolver issues
   })
 
   // Booking options for the dropdown
@@ -68,10 +70,10 @@ export default function Contact() {
           phone: values.phone || "Not provided",
           bookingSection: values.bookingSection || "Not specified",
           message: values.message,
-          type: "contact",
+          type: "contact", // Ensure this is explicitly set
         })
 
-        if (emailResult.success) {
+        if (emailResult && emailResult.success) {
           setFormSuccess({
             success: true,
             message: "Thank you for reaching out! I'll get back to you as soon as possible.",
@@ -82,7 +84,7 @@ export default function Contact() {
           return
         }
       } catch (emailError) {
-        console.error("Error with new email function:", emailError)
+        console.error("Error with email function:", emailError)
         // Fall back to the original contact form submission if the new email function fails
       }
 
@@ -235,9 +237,14 @@ export default function Contact() {
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" className="w-full" disabled={isSubmitting}>
-                    {isSubmitting ? "Sending..." : "Start Your Digital Growth Journey"}
+                  <Button type="submit" className="w-full h-12 text-base" disabled={isSubmitting}>
+                    {isSubmitting ? "Sending..." : "Send Message"}
                   </Button>
+
+                  <div className="mt-4 text-center">
+                    <p className="text-gray-400 mb-2">Or schedule a consultation directly:</p>
+                    <CalendlyBooking buttonText="Book a Free Consultation" className="w-full" />
+                  </div>
                 </form>
               </Form>
             )}

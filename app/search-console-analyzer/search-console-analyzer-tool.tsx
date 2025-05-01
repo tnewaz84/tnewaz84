@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useState, useRef } from "react"
-import { Loader2, AlertCircle, Info, Upload, BarChart2, TrendingUp, Search, ArrowUp } from "lucide-react"
+import { Loader2, AlertCircle, Upload, BarChart2, TrendingUp, Search, ArrowUp } from "lucide-react"
 import { analyzeSearchConsoleData } from "./actions"
 
 export default function SearchConsoleAnalyzerTool() {
@@ -67,6 +67,12 @@ export default function SearchConsoleAnalyzerTool() {
       formData.append("file", file)
 
       const data = await analyzeSearchConsoleData(formData)
+
+      // Validate the returned data
+      if (!data || typeof data !== "object") {
+        throw new Error("Invalid data returned from analysis")
+      }
+
       setResults(data)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to analyze Search Console data")
@@ -76,7 +82,7 @@ export default function SearchConsoleAnalyzerTool() {
   }
 
   const formatNumber = (num: number) => {
-    return new Intl.NumberFormat().format(num)
+    return new Intl.NumberFormat().format(Math.round(num))
   }
 
   const getPositionColor = (position: number) => {
@@ -412,136 +418,93 @@ export default function SearchConsoleAnalyzerTool() {
               groups.
             </p>
 
-            {results.semantic_groups.map((group: any, index: number) => (
-              <div key={index} className="bg-zinc-800 p-4 rounded-md">
-                <div className="flex flex-col md:flex-row justify-between mb-3">
-                  <h5 className="text-lg font-medium">{group.main_keyword}</h5>
-                  <div className="flex gap-4 mt-2 md:mt-0">
-                    <div className="flex items-center">
-                      <BarChart2 className="h-4 w-4 mr-1 text-blue-400" />
-                      <span className="text-sm">{formatNumber(group.metrics.impressions)}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <TrendingUp className="h-4 w-4 mr-1 text-green-400" />
-                      <span className="text-sm">{formatNumber(group.metrics.clicks)}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <Search className="h-4 w-4 mr-1 text-yellow-400" />
-                      <span className={`text-sm ${getCTRColor(group.metrics.ctr)}`}>
-                        {group.metrics.ctr.toFixed(2)}%
-                      </span>
-                    </div>
-                    <div className="flex items-center">
-                      <ArrowUp className="h-4 w-4 mr-1 text-purple-400" />
-                      <span className={`text-sm ${getPositionColor(group.metrics.position)}`}>
-                        {group.metrics.position.toFixed(1)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {group.related_keywords.length > 0 && (
-                  <div>
-                    <p className="text-sm text-gray-400 mb-2">Related keywords:</p>
-                    <div className="flex flex-wrap gap-2">
-                      {group.related_keywords.map((keyword: string, i: number) => (
-                        <span key={i} className="text-xs bg-zinc-700 px-2 py-1 rounded-full">
-                          {keyword}
+            {results.semantic_groups && results.semantic_groups.length > 0 ? (
+              results.semantic_groups.map((group: any, index: number) => (
+                <div key={index} className="bg-zinc-800 p-4 rounded-md">
+                  <div className="flex flex-col md:flex-row justify-between mb-3">
+                    <h5 className="text-lg font-medium">{group.main_keyword}</h5>
+                    <div className="flex gap-4 mt-2 md:mt-0">
+                      <div className="flex items-center">
+                        <BarChart2 className="h-4 w-4 mr-1 text-blue-400" />
+                        <span className="text-sm">{formatNumber(group.metrics.impressions)}</span>
+                      </div>
+                      <div className="flex items-center">
+                        <TrendingUp className="h-4 w-4 mr-1 text-green-400" />
+                        <span className="text-sm">{formatNumber(group.metrics.clicks)}</span>
+                      </div>
+                      <div className="flex items-center">
+                        <Search className="h-4 w-4 mr-1 text-yellow-400" />
+                        <span className={`text-sm ${getCTRColor(group.metrics.ctr)}`}>
+                          {group.metrics.ctr.toFixed(2)}%
                         </span>
-                      ))}
+                      </div>
+                      <div className="flex items-center">
+                        <ArrowUp className="h-4 w-4 mr-1 text-purple-400" />
+                        <span className={`text-sm ${getPositionColor(group.metrics.position)}`}>
+                          {group.metrics.position.toFixed(1)}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                )}
 
-                <div className="mt-3 pt-3 border-t border-zinc-700">
-                  <div className="flex items-start">
-                    <Info className="h-4 w-4 mr-2 text-blue-400 shrink-0 mt-0.5" />
-                    <p className="text-sm text-gray-300">
-                      {group.metrics.position <= 10
-                        ? `This keyword group is already ranking well (position ${group.metrics.position.toFixed(1)}). Focus on improving CTR with better meta descriptions and title tags.`
-                        : `This keyword group is ranking on page ${Math.ceil(group.metrics.position / 10)}. Create more comprehensive content to improve rankings.`}
-                    </p>
-                  </div>
+                  {group.related_keywords && group.related_keywords.length > 0 && (
+                    <div>
+                      <p className="text-sm text-gray-400 mb-2">Related keywords:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {group.related_keywords.map((keyword: string, i: number) => (
+                          <span key={i} className="text-xs bg-zinc-700 text-gray-200 px-2 py-1 rounded-full">
+                            {keyword}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-gray-400">No semantic groups found in the data.</p>
+            )}
           </div>
 
-          <div className="pt-6 border-t border-zinc-800">
+          {/* Recommendations */}
+          <div className="bg-zinc-800 p-6 rounded-lg">
             <h4 className="text-lg font-medium mb-4">Recommendations</h4>
-            <div className="space-y-4">
-              <div className="bg-zinc-800 p-4 rounded-md">
-                <h5 className="font-medium mb-2 flex items-center">
-                  <TrendingUp className="h-5 w-5 mr-2 text-green-400" />
-                  Content Optimization Opportunities
-                </h5>
-                <p className="text-sm text-gray-300 mb-3">
-                  Based on your keyword data, here are content optimization opportunities:
-                </p>
-                <ul className="list-disc pl-5 space-y-2 text-sm text-gray-300">
-                  {results.semantic_groups.slice(0, 3).map((group: any, i: number) => (
-                    <li key={i}>
-                      Create or optimize content for "{group.main_keyword}" and related terms.
-                      {group.metrics.position > 10
-                        ? ` Currently ranking at position ${group.metrics.position.toFixed(1)}, with potential for significant improvement.`
-                        : ` Currently ranking at position ${group.metrics.position.toFixed(1)}, focus on improving CTR.`}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="bg-zinc-800 p-4 rounded-md">
-                <h5 className="font-medium mb-2 flex items-center">
-                  <Search className="h-5 w-5 mr-2 text-yellow-400" />
-                  Click-Through Rate Optimization
-                </h5>
-                <p className="text-sm text-gray-300 mb-2">
-                  Your average CTR is {results.avg_ctr.toFixed(2)}%. Here's how to improve it:
-                </p>
-                <ul className="list-disc pl-5 space-y-2 text-sm text-gray-300">
-                  <li>Use compelling title tags with emotional triggers and numbers</li>
-                  <li>Write meta descriptions that include a clear call-to-action</li>
-                  <li>Implement schema markup to enhance your search results with rich snippets</li>
-                  <li>Test different meta titles and descriptions for high-impression keywords</li>
-                </ul>
-              </div>
-
-              <div className="bg-zinc-800 p-4 rounded-md">
-                <h5 className="font-medium mb-2 flex items-center">
-                  <ArrowUp className="h-5 w-5 mr-2 text-purple-400" />
-                  Ranking Improvement Strategy
-                </h5>
-                <p className="text-sm text-gray-300 mb-2">
-                  To improve your average position of {results.avg_position.toFixed(1)}:
-                </p>
-                <ul className="list-disc pl-5 space-y-2 text-sm text-gray-300">
-                  <li>
-                    Focus on creating comprehensive content that covers all related keywords in each semantic group
-                  </li>
-                  <li>Improve internal linking to distribute page authority to important pages</li>
-                  <li>Enhance page speed and mobile usability for better user experience signals</li>
-                  <li>Build quality backlinks to pages targeting competitive keywords</li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4 mt-8">
-              <a
-                href="/#contact"
-                className="bg-white text-black px-6 py-3 rounded-md font-medium hover:bg-white/90 transition-colors text-center"
-              >
-                Get Professional Help
-              </a>
-              <button
-                onClick={() => {
-                  setResults(null)
-                  setFile(null)
-                }}
-                className="border border-white text-white px-6 py-3 rounded-md font-medium hover:bg-white/10 transition-colors"
-              >
-                Analyze Another File
-              </button>
-            </div>
+            <ul className="space-y-3">
+              <li className="flex items-start">
+                <div className="bg-blue-500/20 p-1 rounded-full mr-3 mt-0.5">
+                  <Search className="h-4 w-4 text-blue-400" />
+                </div>
+                <div>
+                  <p className="font-medium">Focus on improving your top semantic groups</p>
+                  <p className="text-sm text-gray-400 mt-1">
+                    Create or optimize content around your main keyword groups to improve rankings and visibility.
+                  </p>
+                </div>
+              </li>
+              <li className="flex items-start">
+                <div className="bg-green-500/20 p-1 rounded-full mr-3 mt-0.5">
+                  <TrendingUp className="h-4 w-4 text-green-400" />
+                </div>
+                <div>
+                  <p className="font-medium">Improve CTR for high-impression keywords</p>
+                  <p className="text-sm text-gray-400 mt-1">
+                    Optimize your meta titles and descriptions for keywords with high impressions but low CTR.
+                  </p>
+                </div>
+              </li>
+              <li className="flex items-start">
+                <div className="bg-yellow-500/20 p-1 rounded-full mr-3 mt-0.5">
+                  <ArrowUp className="h-4 w-4 text-yellow-400" />
+                </div>
+                <div>
+                  <p className="font-medium">Target keywords on page 2</p>
+                  <p className="text-sm text-gray-400 mt-1">
+                    Focus on keywords with positions between 11-20, as these can be moved to page 1 with targeted
+                    optimization.
+                  </p>
+                </div>
+              </li>
+            </ul>
           </div>
         </div>
       )}

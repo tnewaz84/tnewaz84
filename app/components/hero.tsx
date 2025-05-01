@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react"
 import { motion } from "framer-motion"
 import { useScroll } from "./scroll-provider"
 import Link from "next/link"
+import CalendlyBooking from "./calendly-booking"
 
 // Update the HeroProps interface to include a showAuthButtons prop
 interface HeroProps {
@@ -190,6 +191,15 @@ export default function Hero({
               </motion.div>
             )}
           </motion.div>
+        )}
+      </div>
+      <div className="container mx-auto px-4 py-16 md:py-24 flex flex-col items-center justify-center min-h-[60vh]">
+        {children}
+
+        {showAuthButtons && (
+          <div className="mt-8">
+            <CalendlyBooking buttonText="Book a Free Consultation" />
+          </div>
         )}
       </div>
     </div>

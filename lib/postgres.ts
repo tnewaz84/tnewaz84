@@ -1,15 +1,34 @@
-import { Pool } from "pg"
+import { createClient } from "@vercel/postgres"
 
-const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL,
-})
+// Create a client that doesn't require native compilation
+export const postgresClient = createClient()
 
-export async function query(text: string, params: any[]) {
+// Function to query the database
+export async function queryDatabase(query: string, params: any[] = []) {
   try {
-    const result = await pool.query(text, params)
-    return result
+    const result = await postgresClient.query(query, params)
+    return { success: true, data: result.rows }
   } catch (error) {
-    console.error("Error executing query:", error)
-    throw error
+    console.error("Database query error:", error)
+    return { success: false, error: (error as Error).message }
+  }
+}
+
+// Function to test the database connection
+export async function testDatabaseConnection() {
+  try {
+    const result = await postgresClient.query("SELECT NOW() as current_time")
+    return {
+      success: true,
+      message: "Database connection successful!",
+      timestamp: result.rows[0].current_time,
+    }
+  } catch (error) {
+    console.error("Database connection error:", error)
+    return {
+      success: false,
+      message: "Database connection failed",
+      error: (error as Error).message,
+    }
   }
 }

@@ -69,6 +69,11 @@ export default function Header() {
                 </a>
               </li>
               <li>
+                <a href="/3d-tshirt-designer" className="text-white hover:text-gray-300 transition-colors">
+                  3D T-Shirt Designer
+                </a>
+              </li>
+              <li>
                 <a href="/#portfolio" className="text-white hover:text-gray-300 transition-colors">
                   Portfolio
                 </a>
@@ -181,6 +186,15 @@ export default function Header() {
                     onClick={() => setIsOpen(false)}
                   >
                     T-Shirt Designer
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/3d-tshirt-designer"
+                    className="block text-white hover:text-gray-300 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    3D T-Shirt Designer
                   </a>
                 </li>
                 <li>

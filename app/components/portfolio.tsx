@@ -116,19 +116,27 @@ export default function Portfolio() {
                     <div className="group relative">
                       <img
                         src={work.image || "/placeholder.svg"}
-                        alt={work.title}
+                        alt={work.title || "Project image"}
                         className="w-full aspect-video object-cover transition-transform duration-500 group-hover:scale-105"
+                        onError={(e) => {
+                          e.currentTarget.src = "/placeholder.svg"
+                          e.currentTarget.onerror = null
+                        }}
                       />
                       <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 opacity-0 transition-opacity duration-300 group-hover:opacity-100 p-6">
-                        <h3 className="text-xl font-semibold text-white text-center mb-2">{work.title}</h3>
-                        <p className="text-sm text-gray-300 text-center mb-4">{work.description}</p>
+                        <h3 className="text-xl font-semibold text-white text-center mb-2">
+                          {work.title || "Untitled Project"}
+                        </h3>
+                        <p className="text-sm text-gray-300 text-center mb-4">
+                          {work.description || "No description available"}
+                        </p>
 
-                        {work.stats && (
+                        {work.stats && Array.isArray(work.stats) && work.stats.length > 0 && (
                           <div className="grid grid-cols-3 gap-2 w-full mb-4">
                             {work.stats.map((stat, index) => (
                               <div key={index} className="flex flex-col items-center">
-                                <span className="text-white font-bold text-sm">{stat.value}</span>
-                                <span className="text-gray-400 text-xs">{stat.label}</span>
+                                <span className="text-white font-bold text-sm">{stat?.value || "0"}</span>
+                                <span className="text-gray-400 text-xs">{stat?.label || "Stat"}</span>
                               </div>
                             ))}
                           </div>

@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { analyzeSEO } from "./actions"
 import { Loader2, CheckCircle, AlertCircle, Info } from "lucide-react"
 
@@ -12,7 +12,60 @@ export default function SEOAuditTool() {
   const [results, setResults] = useState<any>(null)
   const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Add this near the top of the component function, after state declarations
+  useEffect(() => {
+    // Check for URL parameter
+    const params = new URLSearchParams(window.location.search)
+    const urlParam = params.get("url")
+
+    // Check session storage
+    const storedUrl = sessionStorage.getItem("seoAnalysisUrl")
+    const storedEmail = sessionStorage.getItem("seoAnalysisEmail")
+
+    // Use URL parameter or stored URL
+    if (urlParam) {
+      setUrl(urlParam)
+      // Auto-submit if we have a URL parameter
+      handleSubmit(urlParam)
+    } else if (storedUrl) {
+      setUrl(storedUrl)
+      // Auto-submit if we have a stored URL
+      handleSubmit(storedUrl)
+
+      // Clear storage after use
+      sessionStorage.removeItem("seoAnalysisUrl")
+      sessionStorage.removeItem("seoAnalysisEmail")
+    }
+  }, [])
+
+  // Add this helper function
+  const handleSubmit = (urlToAnalyze: string) => {
+    if (!urlToAnalyze) return
+
+    setIsAnalyzing(true)
+    setError("")
+
+    // Ensure URL has protocol
+    let formattedUrl = urlToAnalyze
+    if (!formattedUrl.startsWith("http://") && !formattedUrl.startsWith("https://")) {
+      formattedUrl = "https://" + formattedUrl
+    }
+
+    analyzeSite(formattedUrl)
+  }
+
+  const analyzeSite = async (url: string) => {
+    try {
+      const data = await analyzeSEO(url)
+      setResults(data)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to analyze website")
+    } finally {
+      setIsAnalyzing(false)
+    }
+  }
+
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     // Basic URL validation
@@ -21,17 +74,7 @@ export default function SEOAuditTool() {
       return
     }
 
-    try {
-      setIsAnalyzing(true)
-      setError(null)
-
-      const data = await analyzeSEO(url)
-      setResults(data)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to analyze website")
-    } finally {
-      setIsAnalyzing(false)
-    }
+    handleSubmit(url)
   }
 
   const getScoreColor = (score: number) => {
@@ -48,7 +91,7 @@ export default function SEOAuditTool() {
 
   return (
     <div className="bg-zinc-900 rounded-lg p-6">
-      <form onSubmit={handleSubmit} className="mb-6">
+      <form onSubmit={handleFormSubmit} className="mb-6">
         <div className="flex flex-col md:flex-row gap-4">
           <input
             type="text"
