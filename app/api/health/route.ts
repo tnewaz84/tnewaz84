@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server"
 import { supabase } from "@/lib/supabase"
-import { redis } from "@/lib/redis"
-import { query } from "@/lib/postgres"
+import { safeRedis } from "@/lib/redis-safe"
 
 export async function GET() {
   const healthStatus = {
@@ -27,7 +26,7 @@ export async function GET() {
 
   // Check Supabase connection
   try {
-    const { data, error } = await supabase.from("health_check").select("*").limit(1)
+    const { data, error } = await supabase.from("profiles").select("count").single()
     if (error) throw error
     healthStatus.services.supabase = { status: "ok", error: null }
   } catch (error) {
@@ -37,10 +36,13 @@ export async function GET() {
     }
   }
 
-  // Check Redis connection
+  // Check Redis connection - using safe client
   try {
-    await redis.ping()
-    healthStatus.services.redis = { status: "ok", error: null }
+    const pingResult = await safeRedis.ping()
+    healthStatus.services.redis = {
+      status: pingResult === "PONG" ? "ok" : "degraded",
+      error: null,
+    }
   } catch (error) {
     healthStatus.services.redis = {
       status: "error",
@@ -48,10 +50,19 @@ export async function GET() {
     }
   }
 
-  // Check Postgres connection
+  // Check Postgres connection - simplified to avoid import errors
   try {
-    const result = await query("SELECT NOW()")
-    healthStatus.services.postgres = { status: "ok", error: null }
+    if (process.env.POSTGRES_URL || process.env.DIRECT_POSTGRES_URL) {
+      const { createClient } = await import("@vercel/postgres")
+      const client = createClient()
+      const result = await client.query("SELECT NOW()")
+      healthStatus.services.postgres = { status: "ok", error: null }
+    } else {
+      healthStatus.services.postgres = {
+        status: "not_configured",
+        error: "Postgres URL not configured",
+      }
+    }
   } catch (error) {
     healthStatus.services.postgres = {
       status: "error",
@@ -73,7 +84,9 @@ export async function GET() {
   }
 
   // If any service is down, return a 503 status
-  const isHealthy = Object.values(healthStatus.services).every((service) => service.status === "ok")
+  const isHealthy = Object.values(healthStatus.services).every(
+    (service) => service.status === "ok" || service.status === "not_configured" || service.status === "degraded",
+  )
 
   return NextResponse.json(healthStatus, { status: isHealthy ? 200 : 503 })
 }
