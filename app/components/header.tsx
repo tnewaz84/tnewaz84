@@ -53,7 +53,6 @@ export default function Header() {
         { name: "Blockchain Calculator", path: "/blockchain-calculator" },
         { name: "Make Money Online", path: "/make-money-online" },
         { name: "T-Shirt Designer", path: "/design-tshirt" },
-        { name: "3D T-Shirt Designer", path: "/3d-tshirt-designer" },
       ],
     },
     {

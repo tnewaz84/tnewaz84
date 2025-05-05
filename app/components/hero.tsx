@@ -1,12 +1,17 @@
 "use client"
 
 import type React from "react"
-
 import { useEffect, useRef, useState } from "react"
-import { motion } from "framer-motion"
 import { useScroll } from "./scroll-provider"
 import Link from "next/link"
 import CalendlyBooking from "./calendly-booking"
+import gsap from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
+
+// Register ScrollTrigger plugin
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger)
+}
 
 // Update the HeroProps interface to include a showAuthButtons prop
 interface HeroProps {
@@ -28,9 +33,15 @@ export default function Hero({
   backgroundImageAlt = "Tanvir Newaz background image",
 }: HeroProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const heroRef = useRef<HTMLDivElement>(null)
+  const headingRef = useRef<HTMLHeadingElement>(null)
+  const subheadingRef = useRef<HTMLParagraphElement>(null)
+  const ctaRef = useRef<HTMLDivElement>(null)
+  const backgroundRef = useRef<HTMLDivElement>(null)
   const [isMounted, setIsMounted] = useState(false)
   const { scrollProgress } = useScroll()
 
+  // Initialize particle animation
   useEffect(() => {
     setIsMounted(true)
 
@@ -115,21 +126,85 @@ export default function Hero({
     }
   }, [scrollProgress])
 
+  // Initialize GSAP animations
+  useEffect(() => {
+    if (typeof window === "undefined") return
+
+    // Initial animations when component mounts
+    const tl = gsap.timeline()
+
+    if (headingRef.current && subheadingRef.current && ctaRef.current) {
+      tl.fromTo(headingRef.current, { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out" })
+        .fromTo(
+          subheadingRef.current,
+          { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
+          "-=0.6",
+        )
+        .fromTo(ctaRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }, "-=0.4")
+    }
+
+    // Particle animation with GSAP
+    if (canvasRef.current) {
+      gsap.fromTo(canvasRef.current, { opacity: 0 }, { opacity: 1, duration: 2, ease: "power2.inOut" })
+    }
+
+    // Background parallax effect
+    if (backgroundRef.current && heroRef.current) {
+      ScrollTrigger.create({
+        trigger: heroRef.current,
+        start: "top top",
+        end: "bottom top",
+        scrub: true,
+        onUpdate: (self) => {
+          gsap.to(backgroundRef.current, {
+            y: self.progress * 150,
+            ease: "none",
+            duration: 0.1,
+          })
+        },
+      })
+    }
+
+    // Text reveal animation on scroll
+    if (headingRef.current) {
+      ScrollTrigger.create({
+        trigger: heroRef.current,
+        start: "top top",
+        end: "30% top",
+        scrub: true,
+        onUpdate: (self) => {
+          gsap.to(headingRef.current, {
+            scale: 1 - self.progress * 0.1,
+            opacity: 1 - self.progress * 0.5,
+            duration: 0.1,
+          })
+        },
+      })
+    }
+
+    // Clean up animations and ScrollTrigger instances
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
+      gsap.killTweensOf([headingRef.current, subheadingRef.current, ctaRef.current, backgroundRef.current])
+    }
+  }, [isMounted])
+
   // Calculate parallax effect based on scroll
   const parallaxY = scrollProgress * 400 // Move down as user scrolls
 
   return (
-    <div className={`relative w-full overflow-hidden`} style={{ height }}>
+    <div ref={heroRef} className={`relative w-full overflow-hidden`} style={{ height }} data-scroll-section>
       {/* Background with fixed color */}
       <div className="absolute inset-0 bg-black"></div>
 
       {/* Background image with parallax effect */}
       <div
+        ref={backgroundRef}
         className="absolute inset-0 bg-center bg-cover"
         style={{
           backgroundImage: `url(${backgroundImage})`,
           opacity: 0.15,
-          transform: `translateY(${parallaxY * 0.5}px)`,
         }}
         role="img"
         aria-label={backgroundImageAlt}
@@ -138,44 +213,27 @@ export default function Hero({
       {/* Particle animation canvas */}
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full bg-transparent" aria-hidden="true"></canvas>
 
-      {/* Content with parallax effect */}
-      <div
-        className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center"
-        style={{
-          transform: `translateY(${parallaxY * 0.3}px)`,
-        }}
-      >
+      {/* Content with GSAP animations */}
+      <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center">
         {children || (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-4xl"
-          >
-            <motion.h1
+          <div className="max-w-4xl">
+            <h1
+              ref={headingRef}
               className="mb-6 text-4xl font-bold tracking-tighter sm:text-5xl lg:text-6xl"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
+              data-gsap="heading"
             >
               Tanvir Newaz, Google Certified Project Manager and Data-Driven SEO Specialist
-            </motion.h1>
-            <motion.p
+            </h1>
+            <p
+              ref={subheadingRef}
               className="max-w-[600px] mx-auto text-lg text-gray-400 sm:text-xl"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+              data-gsap="subheading"
             >
               The Digital Growth Architect
-            </motion.p>
+            </p>
 
             {showAuthButtons && (
-              <motion.div
-                className="flex flex-col sm:flex-row gap-4 justify-center mt-8"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-              >
+              <div ref={ctaRef} className="flex flex-col sm:flex-row gap-4 justify-center mt-8" data-gsap="cta">
                 <Link
                   href="/forum/register"
                   className="bg-white text-black px-6 py-3 rounded-md font-medium hover:bg-white/90 transition-colors"
@@ -188,16 +246,16 @@ export default function Hero({
                 >
                   Login
                 </Link>
-              </motion.div>
+              </div>
             )}
-          </motion.div>
+          </div>
         )}
       </div>
       <div className="container mx-auto px-4 py-16 md:py-24 flex flex-col items-center justify-center min-h-[60vh]">
         {children}
 
         {showAuthButtons && (
-          <div className="mt-8">
+          <div className="mt-8" ref={ctaRef}>
             <CalendlyBooking buttonText="Book a Free Consultation" />
           </div>
         )}

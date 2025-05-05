@@ -56,11 +56,6 @@ export default function Footer() {
                   SEO Analyzer Tool
                 </Link>
               </li>
-              <li>
-                <Link href="/3d-tshirt-designer" className="hover:text-gray-300">
-                  3D T-Shirt Designer
-                </Link>
-              </li>
             </ul>
           </div>
           <div>
@@ -78,7 +73,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/contact" className="hover:text-gray-300">
-                  Contact
+                  Contact Us
                 </Link>
               </li>
               <li>

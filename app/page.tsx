@@ -11,6 +11,7 @@ import Pricing from "./components/pricing"
 import ConsultationSection from "./components/consultation-section"
 import Contact from "./components/contact"
 import SEOAnalyzerCTA from "./components/seo-analyzer-cta"
+import GSAPAnimations from "./components/gsap-animations"
 
 // Dynamically import components that might cause hydration issues
 const AIChatBot = dynamic(() => import("./components/ai-chat-bot"), {
@@ -22,7 +23,10 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-black text-white">
       <ErrorBoundary>
-        <Hero />
+        <Hero className="hero-section">
+          <GSAPAnimations />
+          {/* Keep existing Hero content */}
+        </Hero>
       </ErrorBoundary>
 
       <ErrorBoundary>
