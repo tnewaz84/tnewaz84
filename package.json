@@ -61,14 +61,14 @@
     "@emotion/is-prop-valid": "latest",
     "@supabase/supabase-js": "latest",
     "framer-motion": "latest",
-    "html2canvas": "latest",
     "papaparse": "latest",
     "@supabase/auth-helpers-nextjs": "latest",
     "@ai-sdk/groq": "latest",
     "ai": "latest",
     "gsap": "latest",
     "@upstash/redis": "latest",
-    "@vercel/postgres": "latest"
+    "@vercel/postgres": "latest",
+    "html2canvas": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",
