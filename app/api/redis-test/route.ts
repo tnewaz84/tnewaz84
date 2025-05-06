@@ -1,60 +1,33 @@
 import { NextResponse } from "next/server"
+import { redis } from "@/lib/redis"
 
 export async function GET() {
   try {
-    // Check if Redis URL is properly formatted
-    const redisUrl = process.env.UPSTASH_REDIS_URL || ""
-    const redisToken = process.env.KV_REST_API_TOKEN || ""
+    // Set a test value
+    const testKey = "redis-test"
+    const testValue = `test-${Date.now()}`
 
-    // Validate Redis configuration
-    if (!redisUrl || !redisToken) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Redis URL or token is not configured",
-          message: "Redis connection failed: Missing configuration",
-        },
-        { status: 500 },
-      )
-    }
+    await redis.set(testKey, testValue, { ex: 60 }) // Expire in 60 seconds
 
-    // Check if Redis URL is in the correct format
-    if (!redisUrl.startsWith("https://")) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: `Invalid Redis URL format: ${redisUrl.substring(0, 10)}... (URL should start with https://)`,
-          message: "Redis connection failed: Invalid URL format",
-        },
-        { status: 500 },
-      )
-    }
+    // Get the value back
+    const retrievedValue = await redis.get(testKey)
 
-    // Dynamically import Redis client to avoid initialization during build
-    const { safeRedis } = await import("@/lib/redis-safe")
-
-    // Test basic connection
-    const pingResult = await safeRedis.ping()
-
-    // Test set operation
-    await safeRedis.set("test-key", "Hello from Redis test!")
-
-    // Test get operation
-    const testValue = await safeRedis.get("test-key")
+    // Check if the values match
+    const success = testValue === retrievedValue
 
     return NextResponse.json({
-      success: true,
-      ping: pingResult,
+      success,
+      message: success ? "Redis connection successful" : "Redis test failed: values do not match",
       testValue,
-      message: "Redis connection successful!",
+      retrievedValue,
     })
   } catch (error) {
-    console.error("Redis test failed:", error)
+    console.error("Redis test error:", error)
+
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : String(error),
-        message: "Redis connection failed!",
+        error: (error as Error).message,
       },
       { status: 500 },
     )

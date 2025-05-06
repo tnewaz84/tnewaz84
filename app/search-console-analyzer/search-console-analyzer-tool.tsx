@@ -452,7 +452,7 @@ export default function SearchConsoleAnalyzerTool() {
                       <p className="text-sm text-gray-400 mb-2">Related keywords:</p>
                       <div className="flex flex-wrap gap-2">
                         {group.related_keywords.map((keyword: string, i: number) => (
-                          <span key={i} className="text-xs bg-zinc-700 text-gray-200 px-2 py-1 rounded-full">
+                          <span key={i} className="text-xs bg-zinc-700 px-2 py-1 rounded-full">
                             {keyword}
                           </span>
                         ))}
@@ -462,49 +462,8 @@ export default function SearchConsoleAnalyzerTool() {
                 </div>
               ))
             ) : (
-              <p className="text-gray-400">No semantic groups found in the data.</p>
+              <div className="text-center py-8 text-gray-400">No semantic groups found in the data.</div>
             )}
-          </div>
-
-          {/* Recommendations */}
-          <div className="bg-zinc-800 p-6 rounded-lg">
-            <h4 className="text-lg font-medium mb-4">Recommendations</h4>
-            <ul className="space-y-3">
-              <li className="flex items-start">
-                <div className="bg-blue-500/20 p-1 rounded-full mr-3 mt-0.5">
-                  <Search className="h-4 w-4 text-blue-400" />
-                </div>
-                <div>
-                  <p className="font-medium">Focus on improving your top semantic groups</p>
-                  <p className="text-sm text-gray-400 mt-1">
-                    Create or optimize content around your main keyword groups to improve rankings and visibility.
-                  </p>
-                </div>
-              </li>
-              <li className="flex items-start">
-                <div className="bg-green-500/20 p-1 rounded-full mr-3 mt-0.5">
-                  <TrendingUp className="h-4 w-4 text-green-400" />
-                </div>
-                <div>
-                  <p className="font-medium">Improve CTR for high-impression keywords</p>
-                  <p className="text-sm text-gray-400 mt-1">
-                    Optimize your meta titles and descriptions for keywords with high impressions but low CTR.
-                  </p>
-                </div>
-              </li>
-              <li className="flex items-start">
-                <div className="bg-yellow-500/20 p-1 rounded-full mr-3 mt-0.5">
-                  <ArrowUp className="h-4 w-4 text-yellow-400" />
-                </div>
-                <div>
-                  <p className="font-medium">Target keywords on page 2</p>
-                  <p className="text-sm text-gray-400 mt-1">
-                    Focus on keywords with positions between 11-20, as these can be moved to page 1 with targeted
-                    optimization.
-                  </p>
-                </div>
-              </li>
-            </ul>
           </div>
         </div>
       )}

@@ -1,183 +1,279 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { Menu, X, ChevronDown } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Menu, X, Phone } from "lucide-react"
+import { motion } from "framer-motion"
 
 export default function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
-  const pathname = usePathname()
+  const [isOpen, setIsOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
+      if (window.scrollY > 50) {
+        setScrolled(true)
+      } else {
+        setScrolled(false)
+      }
     }
 
-    // Add event listener with debounce
-    let timeoutId: NodeJS.Timeout
-    const debouncedHandleScroll = () => {
-      clearTimeout(timeoutId)
-      timeoutId = setTimeout(handleScroll, 100)
-    }
-
-    window.addEventListener("scroll", debouncedHandleScroll)
-
-    // Initial check
-    handleScroll()
-
-    // Cleanup
+    window.addEventListener("scroll", handleScroll)
     return () => {
-      window.removeEventListener("scroll", debouncedHandleScroll)
-      clearTimeout(timeoutId)
+      window.removeEventListener("scroll", handleScroll)
     }
   }, [])
-
-  // Close mobile menu when route changes
-  useEffect(() => {
-    setIsMenuOpen(false)
-  }, [pathname])
-
-  const navLinks = [
-    { name: "Home", path: "/" },
-    { name: "Blog", path: "/blog" },
-    {
-      name: "Tools",
-      children: [
-        { name: "SEO Analyzer", path: "/seo-analyzer" },
-        { name: "Search Console Analyzer", path: "/search-console-analyzer" },
-        { name: "Ad Management", path: "/ad-management" },
-        { name: "Blockchain Calculator", path: "/blockchain-calculator" },
-        { name: "Make Money Online", path: "/make-money-online" },
-        { name: "T-Shirt Designer", path: "/design-tshirt" },
-      ],
-    },
-    {
-      name: "Services",
-      children: [
-        { name: "Streaming", path: "/streaming" },
-        { name: "NinJam", path: "/ninjam" },
-      ],
-    },
-    { name: "Forum", path: "/forum" },
-  ]
-
-  const isActive = (path: string) => {
-    if (path === "/") {
-      return pathname === path
-    }
-    return pathname.startsWith(path)
-  }
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-black/80 backdrop-blur-md shadow-md" : "bg-transparent"
+        scrolled ? "bg-black/80 backdrop-blur-md py-2" : "bg-transparent py-4"
       }`}
     >
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          <Link href="/" className="text-xl font-bold text-white">
-            Tanvir Newaz
-          </Link>
+        <div className="flex items-center justify-between">
+          {/* Logo */}
+          <div className="flex items-center">
+            <a href="/" className="flex items-center">
+              <div className="relative w-[50px] h-[50px]">
+                <img
+                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/tanvir%20newaz%20logo%20%281%29-TCjGk8KykAeFIutJcUZ0Yckm0nxBiA.png"
+                  alt="Tanvir Newaz Logo"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <span className="ml-2 text-xl font-semibold text-white">Tanvir Newaz</span>
+            </a>
+          </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-6">
-            {navLinks.map((link) =>
-              link.children ? (
-                <DropdownMenu key={link.name}>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      className={`flex items-center text-sm font-medium ${
-                        link.children.some((child) => isActive(child.path))
-                          ? "text-white"
-                          : "text-gray-300 hover:text-white"
-                      }`}
-                    >
-                      {link.name}
-                      <ChevronDown className="ml-1 h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="bg-zinc-900 border-zinc-800">
-                    {link.children.map((child) => (
-                      <DropdownMenuItem key={child.name} asChild>
-                        <Link
-                          href={child.path}
-                          className={`w-full px-3 py-2 text-sm ${
-                            isActive(child.path)
-                              ? "bg-zinc-800 text-white"
-                              : "text-gray-300 hover:bg-zinc-800 hover:text-white"
-                          }`}
-                        >
-                          {child.name}
-                        </Link>
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              ) : (
-                <Link
-                  key={link.name}
-                  href={link.path}
-                  className={`text-sm font-medium ${
-                    isActive(link.path) ? "text-white" : "text-gray-300 hover:text-white"
-                  }`}
-                >
-                  {link.name}
-                </Link>
-              ),
-            )}
+          {/* Desktop Menu */}
+          <nav className="hidden md:flex items-center justify-center">
+            <ul className="flex space-x-8">
+              <li>
+                <a href="/" className="text-white hover:text-gray-300 transition-colors">
+                  Home
+                </a>
+              </li>
+              <li>
+                <a href="/#services" className="text-white hover:text-gray-300 transition-colors">
+                  Services
+                </a>
+              </li>
+              <li>
+                <a href="/make-money-online" className="text-white hover:text-gray-300 transition-colors">
+                  Make Money
+                </a>
+              </li>
+              <li>
+                <a href="/design-tshirt" className="text-white hover:text-gray-300 transition-colors">
+                  T-Shirt Designer
+                </a>
+              </li>
+              <li>
+                <a href="/#portfolio" className="text-white hover:text-gray-300 transition-colors">
+                  Portfolio
+                </a>
+              </li>
+              <li>
+                <a href="/#pricing" className="text-white hover:text-gray-300 transition-colors">
+                  Pricing
+                </a>
+              </li>
+              <li>
+                <a href="/blog" className="text-white hover:text-gray-300 transition-colors">
+                  Blog
+                </a>
+              </li>
+              <li>
+                <a href="/seo-analyzer" className="text-white hover:text-gray-300 transition-colors">
+                  SEO Analyzer
+                </a>
+              </li>
+              <li>
+                <a href="/search-console-analyzer" className="text-white hover:text-gray-300 transition-colors">
+                  Search Console
+                </a>
+              </li>
+              <li>
+                <a href="/ad-management" className="text-white hover:text-gray-300 transition-colors">
+                  Ad Management
+                </a>
+              </li>
+              <li>
+                <a href="/streaming" className="text-white hover:text-gray-300 transition-colors">
+                  Streaming
+                </a>
+              </li>
+              <li>
+                <a href="/ninjam" className="text-white hover:text-gray-300 transition-colors">
+                  Ninjam
+                </a>
+              </li>
+              <li>
+                <a href="/#contact" className="text-white hover:text-gray-300 transition-colors">
+                  Contact
+                </a>
+              </li>
+            </ul>
           </nav>
 
+          {/* Phone Number */}
+          <div className="hidden md:flex items-center">
+            <a href="tel:+12012924983" className="flex items-center text-white hover:text-gray-300 transition-colors">
+              <Phone className="h-4 w-4 mr-2" />
+              <span>+1-201-292-4983</span>
+            </a>
+          </div>
+
           {/* Mobile Menu Button */}
-          <button className="md:hidden text-white" onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle menu">
-            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          <button
+            className="md:hidden text-white focus:outline-none"
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label="Toggle menu"
+          >
+            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Navigation */}
-      {isMenuOpen && (
-        <div className="md:hidden bg-zinc-900 border-t border-zinc-800">
-          <div className="container mx-auto px-4 py-3">
-            <nav className="flex flex-col space-y-3">
-              {navLinks.map((link) =>
-                link.children ? (
-                  <div key={link.name} className="space-y-2">
-                    <div className="font-medium text-white">{link.name}</div>
-                    <div className="pl-4 space-y-2 border-l border-zinc-700">
-                      {link.children.map((child) => (
-                        <Link
-                          key={child.name}
-                          href={child.path}
-                          className={`block text-sm ${
-                            isActive(child.path) ? "text-white font-medium" : "text-gray-300 hover:text-white"
-                          }`}
-                        >
-                          {child.name}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <Link
-                    key={link.name}
-                    href={link.path}
-                    className={`text-sm font-medium ${
-                      isActive(link.path) ? "text-white" : "text-gray-300 hover:text-white"
-                    }`}
+      {/* Mobile Menu */}
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.3 }}
+          className="md:hidden bg-black/95 backdrop-blur-md"
+        >
+          <div className="container mx-auto px-4 py-4">
+            <nav>
+              <ul className="flex flex-col space-y-4">
+                <li>
+                  <a
+                    href="/"
+                    className="block text-white hover:text-gray-300 transition-colors"
+                    onClick={() => setIsOpen(false)}
                   >
-                    {link.name}
-                  </Link>
-                ),
-              )}
+                    Home
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/#services"
+                    className="block text-white hover:text-gray-300 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Services
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/make-money-online"
+                    className="block text-white hover:text-gray-300 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Make Money
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/design-tshirt"
+                    className="block text-white hover:text-gray-300 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    T-Shirt Designer
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/#portfolio"
+                    className="block text-white hover:text-gray-300 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Portfolio
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/#pricing"
+                    className="block text-white hover:text-gray-300 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Pricing
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/blog"
+                    className="block text-white hover:text-gray-300 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Blog
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/seo-analyzer"
+                    className="block text-white hover:text-gray-300 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    SEO Analyzer
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/search-console-analyzer"
+                    className="block text-white hover:text-gray-300 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Search Console
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/ad-management"
+                    className="block text-white hover:text-gray-300 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Ad Management
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/streaming"
+                    className="block text-white hover:text-gray-300 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Streaming
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/ninjam"
+                    className="block text-white hover:text-gray-300 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Ninjam
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/#contact"
+                    className="block text-white hover:text-gray-300 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Contact
+                  </a>
+                </li>
+              </ul>
             </nav>
+            <div className="mt-6">
+              <a href="tel:+12012924983" className="flex items-center text-white hover:text-gray-300 transition-colors">
+                <Phone className="h-4 w-4 mr-2" />
+                <span>+1-201-292-4983</span>
+              </a>
+            </div>
           </div>
-        </div>
+        </motion.div>
       )}
     </header>
   )

@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { RedisStatus } from "./redis-status"
 
 export default function Footer() {
   return (
@@ -73,7 +74,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/contact" className="hover:text-gray-300">
-                  Contact Us
+                  Contact
                 </Link>
               </li>
               <li>
@@ -93,6 +94,9 @@ export default function Footer() {
               </li>
             </ul>
           </div>
+        </div>
+        <div className="flex items-center gap-2 mb-2">
+          <RedisStatus />
         </div>
         <div className="border-t border-gray-800 mt-8 pt-8 text-center">
           <p>&copy; {new Date().getFullYear()} Tanvir Newaz. All rights reserved.</p>

@@ -1,33 +1,73 @@
-// This file is a wrapper around the Redis client that avoids initialization during build
-// It exports the same interface as the real Redis client, but defers initialization until runtime
+import { Redis } from "@upstash/redis"
 
-// Export the safe Redis client and helper functions
-export {
-  safeRedis as redis,
-  getCache,
-  setCache,
-  deleteCache,
-  getFromCache,
-  setInCache,
-  deleteFromCache,
-} from "./redis-safe"
+// Initialize Redis client with environment variables
+export const redis = new Redis({
+  url: process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_URL || "",
+  token: process.env.KV_REST_API_TOKEN || process.env.KV_REST_API_TOKEN || "",
+})
 
-// Export additional functions that might be used elsewhere
-export async function setCacheWithHash(hash: string, key: string, value: any): Promise<number> {
-  const { safeRedis } = await import("./redis-safe")
-  const valueToStore = typeof value === "string" ? value : JSON.stringify(value)
-  return safeRedis.hset(hash, { [key]: valueToStore })
-}
-
-export async function getCacheFromHash<T>(hash: string, key: string): Promise<T | null> {
-  const { safeRedis } = await import("./redis-safe")
-  const data = await safeRedis.hget(hash, key)
-  if (!data) return null
-
+// Get a value from cache
+export async function getCache<T>(key: string): Promise<T | null> {
   try {
-    return typeof data === "string" ? (JSON.parse(data) as T) : (data as T)
+    return await redis.get(key)
   } catch (error) {
-    console.error(`Error parsing Redis hash data for ${hash}:${key}:`, error)
+    console.error("Redis getCache error:", error)
     return null
   }
 }
+
+// Set a value in cache with optional expiration
+export async function setCache(key: string, value: any, expireSeconds?: number): Promise<void> {
+  try {
+    if (expireSeconds) {
+      await redis.set(key, value, { ex: expireSeconds })
+    } else {
+      await redis.set(key, value)
+    }
+  } catch (error) {
+    console.error("Redis setCache error:", error)
+  }
+}
+
+// Delete a value from cache
+export async function deleteCache(key: string): Promise<void> {
+  try {
+    await redis.del(key)
+  } catch (error) {
+    console.error("Redis deleteCache error:", error)
+  }
+}
+
+// Get all keys matching a pattern
+export async function getKeys(pattern: string): Promise<string[]> {
+  try {
+    return await redis.keys(pattern)
+  } catch (error) {
+    console.error("Redis getKeys error:", error)
+    return []
+  }
+}
+
+// Get Redis info
+export async function getRedisInfo(): Promise<any> {
+  try {
+    return await redis.info()
+  } catch (error) {
+    console.error("Redis info error:", error)
+    return null
+  }
+}
+
+// Check Redis connection
+export async function pingRedis(): Promise<boolean> {
+  try {
+    const result = await redis.ping()
+    return result === "PONG"
+  } catch (error) {
+    console.error("Redis ping error:", error)
+    return false
+  }
+}
+
+// Export redis as default as well
+export default redis

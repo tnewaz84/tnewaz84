@@ -59,15 +59,16 @@
     "vaul": "^0.9.6",
     "zod": "latest",
     "@emotion/is-prop-valid": "latest",
-    "framer-motion": "latest",
     "@supabase/supabase-js": "latest",
+    "framer-motion": "latest",
     "html2canvas": "latest",
-    "papaparse": "latest",
-    "https": "latest",
     "@vercel/postgres": "latest",
-    "@upstash/redis": "latest",
+    "papaparse": "latest",
+    "@supabase/auth-helpers-nextjs": "latest",
+    "@ai-sdk/groq": "latest",
+    "ai": "latest",
     "gsap": "latest",
-    "sharp": "latest"
+    "@upstash/redis": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",
