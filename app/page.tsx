@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { ArrowRight, CheckCircle } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import GsapHero from "./components/gsap-hero"
 import GsapPortfolio from "./components/gsap-portfolio"
 import GsapTextAnimation from "./components/gsap-text-animation"
@@ -70,52 +70,6 @@ export default function Page() {
             My approach combines cutting-edge technology with proven marketing principles to help clients achieve
             measurable results and sustainable growth.
           </GsapTextAnimation>
-        </div>
-      </section>
-
-      {/* Proven Results Section with GSAP */}
-      <section className="py-16 md:py-20 bg-zinc-900">
-        <div className="container mx-auto max-w-4xl px-4">
-          <GsapTextAnimation
-            as="h2"
-            animation="chars"
-            className="text-2xl md:text-3xl font-bold mb-8 md:mb-10 text-center"
-          >
-            Proven Results
-          </GsapTextAnimation>
-
-          <GsapScrollAnimation
-            animation="stagger"
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8"
-          >
-            <div className="bg-zinc-800 p-6 md:p-8 rounded-lg shadow-md">
-              <div className="flex items-center mb-4">
-                <div className="bg-green-500/20 p-2 rounded-full mr-3">
-                  <CheckCircle className="h-6 w-6 text-green-500" />
-                </div>
-                <h3 className="text-xl font-bold">43%</h3>
-              </div>
-              <p className="text-gray-300">Reduction in acquisition costs through optimized marketing funnels</p>
-            </div>
-            <div className="bg-zinc-800 p-6 md:p-8 rounded-lg shadow-md">
-              <div className="flex items-center mb-4">
-                <div className="bg-green-500/20 p-2 rounded-full mr-3">
-                  <CheckCircle className="h-6 w-6 text-green-500" />
-                </div>
-                <h3 className="text-xl font-bold">78%</h3>
-              </div>
-              <p className="text-gray-300">Outperform competitor campaigns with data-driven strategies</p>
-            </div>
-            <div className="bg-zinc-800 p-6 md:p-8 rounded-lg shadow-md sm:col-span-2 md:col-span-1">
-              <div className="flex items-center mb-4">
-                <div className="bg-green-500/20 p-2 rounded-full mr-3">
-                  <CheckCircle className="h-6 w-6 text-green-500" />
-                </div>
-                <h3 className="text-xl font-bold">100%</h3>
-              </div>
-              <p className="text-gray-300">Satisfaction guarantee with all services and solutions</p>
-            </div>
-          </GsapScrollAnimation>
         </div>
       </section>
 
