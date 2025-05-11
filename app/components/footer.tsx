@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link"
 import { RedisStatus } from "./redis-status"
 import { Component, type ErrorInfo, type ReactNode } from "react"
