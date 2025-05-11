@@ -35,103 +35,96 @@ export default function GsapTextAnimation({
   threshold = 0.2,
   once = true,
 }: GsapTextAnimationProps) {
-  const textRef = useRef<HTMLElement>(null)
+  const containerRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
-    if (!textRef.current) return
+    if (!containerRef.current || typeof window === "undefined") return
 
-    let splitText: SplitText | null = null
-    let animation: gsap.core.Tween | gsap.core.Timeline | null = null
+    const ctx = gsap.context(() => {
+      const element = containerRef.current
+      if (!element) return
 
-    // Create the animation based on the type
-    const createAnimation = () => {
-      if (!textRef.current) return null
+      if (animation === "chars") {
+        // Split text into characters if needed
+        let chars
+        try {
+          chars = SplitText ? new SplitText(element, { type: "chars" }).chars : element.textContent?.split("") || []
+        } catch (error) {
+          console.error("Error splitting text:", error)
+          return
+        }
 
-      switch (animation) {
-        case "chars":
-          splitText = new SplitText(textRef.current, { type: "chars" })
-          return gsap.from(splitText.chars, {
-            opacity: 0,
-            y: 20,
-            rotationX: -90,
-            stagger: stagger,
-            duration: duration,
-            ease: "power4.out",
-            delay: delay,
-          })
-
-        case "words":
-          splitText = new SplitText(textRef.current, { type: "words" })
-          return gsap.from(splitText.words, {
-            opacity: 0,
-            y: 30,
-            stagger: stagger * 3,
-            duration: duration,
-            ease: "power3.out",
-            delay: delay,
-          })
-
-        case "lines":
-          splitText = new SplitText(textRef.current, { type: "lines" })
-          return gsap.from(splitText.lines, {
-            opacity: 0,
-            y: 50,
-            stagger: stagger * 5,
-            duration: duration,
+        gsap.fromTo(
+          chars,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            stagger: 0.02,
+            duration: 0.5,
             ease: "power2.out",
-            delay: delay,
-          })
+            scrollTrigger: {
+              trigger: element,
+              start: "top 80%",
+              end: "bottom 20%",
+              toggleActions: "play none none reverse",
+            },
+          },
+        )
+      } else if (animation === "words") {
+        // Split text into words if needed
+        let words
+        try {
+          words = SplitText ? new SplitText(element, { type: "words" }).words : element.textContent?.split(" ") || []
+        } catch (error) {
+          console.error("Error splitting text:", error)
+          return
+        }
 
-        case "fade":
-          return gsap.from(textRef.current, {
-            opacity: 0,
-            duration: duration,
+        gsap.fromTo(
+          words,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            stagger: 0.05,
+            duration: 0.5,
             ease: "power2.out",
-            delay: delay,
-          })
-
-        case "slide":
-          return gsap.from(textRef.current, {
-            opacity: 0,
-            x: -50,
-            duration: duration,
+            scrollTrigger: {
+              trigger: element,
+              start: "top 80%",
+              end: "bottom 20%",
+              toggleActions: "play none none reverse",
+            },
+          },
+        )
+      } else {
+        // Default fade animation
+        gsap.fromTo(
+          element,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            delay: delay || 0,
             ease: "power2.out",
-            delay: delay,
-          })
-
-        default:
-          return null
+            scrollTrigger: {
+              trigger: element,
+              start: "top 80%",
+              end: "bottom 20%",
+              toggleActions: "play none none reverse",
+            },
+          },
+        )
       }
-    }
+    }, containerRef)
 
-    // Create ScrollTrigger
-    const scrollTrigger = ScrollTrigger.create({
-      trigger: textRef.current,
-      start: `top bottom-=${threshold * 100}%`,
-      onEnter: () => {
-        animation = createAnimation()
-      },
-      onLeaveBack: () => {
-        if (!once && animation) {
-          animation.reverse()
-        }
-      },
-      onEnterBack: () => {
-        if (!once && animation) {
-          animation.play()
-        }
-      },
-    })
-
-    return () => {
-      if (splitText) splitText.revert()
-      if (animation) animation.kill()
-      scrollTrigger.kill()
-    }
-  }, [animation, delay, duration, stagger, threshold, once, children])
+    return () => ctx.revert()
+  }, [animation, delay])
 
   return (
-    <Component ref={textRef} className={className}>
+    <Component ref={containerRef} className={className}>
       {children}
     </Component>
   )

@@ -3,14 +3,20 @@
 import type React from "react"
 
 import { useEffect } from "react"
-import gsap from "gsap"
+import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { SplitText } from "gsap/SplitText"
 
-// Register GSAP plugins
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger, SplitText)
+// Only register plugins if GSAP is available
+if (typeof gsap !== "undefined") {
+  try {
+    gsap.registerPlugin(ScrollTrigger, SplitText)
+  } catch (error) {
+    console.error("Error registering GSAP plugins:", error)
+  }
 }
+
+export { gsap, ScrollTrigger, SplitText }
 
 // Hook for basic GSAP animation
 export const useGsapAnimation = (

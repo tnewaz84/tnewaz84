@@ -30,51 +30,21 @@ export default function Hero({
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [isMounted, setIsMounted] = useState(false)
   const { scrollProgress } = useScroll()
-  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 })
 
   useEffect(() => {
     setIsMounted(true)
 
-    // Set initial window size
-    setWindowSize({
-      width: window.innerWidth,
-      height: window.innerHeight,
-    })
-
-    // Handle window resize with debounce
-    let resizeTimer: NodeJS.Timeout
-    const handleResize = () => {
-      clearTimeout(resizeTimer)
-      resizeTimer = setTimeout(() => {
-        setWindowSize({
-          width: window.innerWidth,
-          height: window.innerHeight,
-        })
-      }, 100)
-    }
-
-    window.addEventListener("resize", handleResize)
-
-    return () => {
-      window.removeEventListener("resize", handleResize)
-      clearTimeout(resizeTimer)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!canvasRef.current || !isMounted) return
+    if (!canvasRef.current) return
 
     const canvas = canvasRef.current
     const ctx = canvas.getContext("2d")
     if (!ctx) return
 
-    // Set canvas dimensions
-    canvas.width = windowSize.width
-    canvas.height = windowSize.height
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
 
     const particles: Particle[] = []
-    // Adjust particle count based on screen size
-    const particleCount = windowSize.width < 768 ? 50 : 100
+    const particleCount = 100
 
     class Particle {
       x: number
@@ -115,13 +85,10 @@ export default function Hero({
       }
     }
 
-    // Create particles
     for (let i = 0; i < particleCount; i++) {
       particles.push(new Particle())
     }
 
-    // Animation loop
-    let animationId: number
     function animate() {
       if (!ctx) return
       ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -131,16 +98,22 @@ export default function Hero({
         particle.draw()
       }
 
-      animationId = requestAnimationFrame(animate)
+      requestAnimationFrame(animate)
     }
 
     animate()
 
-    // Cleanup
-    return () => {
-      cancelAnimationFrame(animationId)
+    const handleResize = () => {
+      if (!canvasRef.current) return
+      canvasRef.current.width = window.innerWidth
+      canvasRef.current.height = window.innerHeight
     }
-  }, [scrollProgress, windowSize, isMounted])
+
+    window.addEventListener("resize", handleResize)
+    return () => {
+      window.removeEventListener("resize", handleResize)
+    }
+  }, [scrollProgress])
 
   // Calculate parallax effect based on scroll
   const parallaxY = scrollProgress * 400 // Move down as user scrolls
@@ -177,10 +150,10 @@ export default function Hero({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="max-w-4xl px-4"
+            className="max-w-4xl"
           >
             <motion.h1
-              className="mb-6 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter"
+              className="mb-6 text-4xl font-bold tracking-tighter sm:text-5xl lg:text-6xl"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
@@ -188,7 +161,7 @@ export default function Hero({
               Tanvir Newaz, Google Certified Project Manager and Data-Driven SEO Specialist
             </motion.h1>
             <motion.p
-              className="max-w-[600px] mx-auto text-base sm:text-lg md:text-xl text-gray-400"
+              className="max-w-[600px] mx-auto text-lg text-gray-400 sm:text-xl"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
@@ -220,7 +193,7 @@ export default function Hero({
           </motion.div>
         )}
       </div>
-      <div className="container mx-auto px-4 py-12 md:py-16 lg:py-24 flex flex-col items-center justify-center min-h-[60vh]">
+      <div className="container mx-auto px-4 py-16 md:py-24 flex flex-col items-center justify-center min-h-[60vh]">
         {children}
 
         {showAuthButtons && (

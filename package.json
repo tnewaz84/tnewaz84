@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ai-sdk/groq": "latest",
     "@emotion/is-prop-valid": "latest",
     "@hookform/resolvers": "latest",
     "@radix-ui/react-accordion": "1.2.2",
@@ -42,6 +43,7 @@
     "@supabase/supabase-js": "latest",
     "@upstash/redis": "latest",
     "@vercel/postgres": "latest",
+    "ai": "latest",
     "autoprefixer": "^10.4.20",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -49,7 +51,6 @@
     "date-fns": "4.1.0",
     "embla-carousel-react": "8.5.1",
     "framer-motion": "latest",
-    "groq-sdk": "latest",
     "gsap": "latest",
     "html2canvas": "latest",
     "input-otp": "1.4.1",

@@ -26,6 +26,7 @@ export default function AIChatBot() {
       content: "Hi there! I'm Tanvir's AI assistant. How can I help you with digital marketing today?",
     },
   ])
+  const [isLoading, setIsLoading] = useState(false)
   const [loading, setLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -102,7 +103,6 @@ export default function AIChatBot() {
       <Button
         onClick={() => setIsOpen(!isOpen)}
         className="fixed bottom-4 right-4 z-50 rounded-full h-14 w-14 p-0 shadow-lg"
-        aria-label={isOpen ? "Close chat" : "Open chat"}
       >
         {isOpen ? <X size={24} /> : <MessageSquare size={24} />}
       </Button>
@@ -113,7 +113,7 @@ export default function AIChatBot() {
           <CardHeader className="py-3 px-4 border-b">
             <div className="flex items-center space-x-2">
               <Avatar className="h-8 w-8">
-                <AvatarImage src="/abstract-ai-network.png" alt="AI Assistant" />
+                <AvatarImage src="/abstract-ai-network.png" />
                 <AvatarFallback>
                   <Bot size={16} />
                 </AvatarFallback>
@@ -131,7 +131,6 @@ export default function AIChatBot() {
                     }`}
                   >
                     <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                    {message.cached && <span className="text-xs opacity-50 mt-1 block">(cached response)</span>}
                   </div>
                 </div>
               ))}
@@ -157,7 +156,6 @@ export default function AIChatBot() {
               />
               <Button type="submit" size="icon" disabled={loading || !input.trim()}>
                 <Send size={16} />
-                <span className="sr-only">Send message</span>
               </Button>
             </form>
           </CardFooter>

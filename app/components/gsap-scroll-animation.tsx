@@ -22,6 +22,7 @@ interface GsapScrollAnimationProps {
   markers?: boolean
   once?: boolean
   className?: string
+  childSelector?: string
 }
 
 export function GsapScrollAnimation({
@@ -37,84 +38,63 @@ export function GsapScrollAnimation({
   markers = false,
   once = true,
   className = "",
+  childSelector,
 }: GsapScrollAnimationProps) {
-  const elementRef = useRef<HTMLDivElement>(null)
-  const childrenRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!elementRef.current) return
+    if (!containerRef.current || typeof window === "undefined") return
 
-    // Animation configurations
-    const animations = {
-      fadeIn: {
-        from: { opacity: 0 },
-        to: { opacity: 1 },
-      },
-      fadeUp: {
-        from: { opacity: 0, y: 50 },
-        to: { opacity: 1, y: 0 },
-      },
-      fadeRight: {
-        from: { opacity: 0, x: -50 },
-        to: { opacity: 1, x: 0 },
-      },
-      fadeLeft: {
-        from: { opacity: 0, x: 50 },
-        to: { opacity: 1, x: 0 },
-      },
-      scale: {
-        from: { opacity: 0, scale: 0.8 },
-        to: { opacity: 1, scale: 1 },
-      },
-      stagger: {
-        from: { opacity: 0, y: 30 },
-        to: { opacity: 1, y: 0 },
-      },
-    }
+    const ctx = gsap.context(() => {
+      // Fix: Get direct children elements without using the invalid selector
+      let elements
 
-    const selectedAnimation = animations[animation]
-    let tween: gsap.core.Tween | gsap.core.Timeline
+      if (childSelector) {
+        // If a specific child selector is provided, use it
+        elements = containerRef.current?.querySelectorAll(childSelector)
+      } else {
+        // Otherwise, get all direct children using Array.from
+        elements = containerRef.current ? Array.from(containerRef.current.children) : []
+      }
 
-    if (animation === "stagger" && childrenRef.current) {
-      // For stagger animation, animate each child
-      const children = Array.from(childrenRef.current.children)
-      tween = gsap.fromTo(children, selectedAnimation.from, {
-        ...selectedAnimation.to,
-        stagger: stagger,
-        duration: duration,
-        delay: delay,
-        ease: "power3.out",
+      if (!elements || elements.length === 0) return
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top 80%",
+          end: "bottom 20%",
+          toggleActions: "play none none reverse",
+        },
       })
-    } else {
-      // For other animations, animate the container
-      tween = gsap.fromTo(elementRef.current, selectedAnimation.from, {
-        ...selectedAnimation.to,
-        duration: duration,
-        delay: delay,
-        ease: "power3.out",
-      })
-    }
 
-    // Create ScrollTrigger
-    const trigger = ScrollTrigger.create({
-      trigger: elementRef.current,
-      start: start,
-      end: end,
-      scrub: scrub,
-      markers: markers,
-      toggleActions: once ? "play none none none" : "play reverse play reverse",
-      animation: tween,
-    })
+      // Apply different animations based on the animation prop
+      if (animation === "stagger") {
+        tl.fromTo(
+          elements,
+          { y: 50, opacity: 0 },
+          { y: 0, opacity: 1, stagger: 0.1, duration: 0.8, ease: "power2.out" },
+        )
+      } else if (animation === "fadeUp") {
+        tl.fromTo(elements, { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power2.out" })
+      } else if (animation === "fadeRight") {
+        tl.fromTo(elements, { x: -50, opacity: 0 }, { x: 0, opacity: 1, duration: 0.8, ease: "power2.out" })
+      } else if (animation === "fadeLeft") {
+        tl.fromTo(elements, { x: 50, opacity: 0 }, { x: 0, opacity: 1, duration: 0.8, ease: "power2.out" })
+      } else if (animation === "scale") {
+        tl.fromTo(elements, { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.8, ease: "power2.out" })
+      } else {
+        // Default animation (fadeIn)
+        tl.fromTo(elements, { opacity: 0 }, { opacity: 1, duration: 0.8, ease: "power2.out" })
+      }
+    }, containerRef)
 
-    return () => {
-      tween.kill()
-      trigger.kill()
-    }
-  }, [animation, delay, duration, stagger, threshold, start, end, scrub, markers, once])
+    return () => ctx.revert()
+  }, [animation, childSelector, delay, duration, end, markers, once, scrub, stagger, start, threshold])
 
   return (
-    <div ref={elementRef} className={className}>
-      {animation === "stagger" ? <div ref={childrenRef}>{children}</div> : children}
+    <div ref={containerRef} className={className}>
+      {children}
     </div>
   )
 }

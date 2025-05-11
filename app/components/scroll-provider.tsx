@@ -23,24 +23,26 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
   const [scrollProgress, setScrollProgress] = useState(0)
 
   useEffect(() => {
+    if (typeof window === "undefined") return
+
     const handleScroll = () => {
-      const currentScrollY = window.scrollY
-      const totalHeight = document.body.scrollHeight - window.innerHeight
+      const scrollY = window.scrollY || 0
+      const windowHeight = window.innerHeight || 1
+      const documentHeight = document.documentElement?.scrollHeight || document.body?.scrollHeight || 1
 
-      // Update scroll position
-      setScrollY(currentScrollY)
+      // Calculate scroll progress safely
+      const maxScroll = documentHeight - windowHeight
+      const progress = maxScroll <= 0 ? 0 : scrollY / maxScroll
 
-      // Determine scroll direction
-      setScrollDirection(currentScrollY > lastScrollY ? "down" : "up")
-      setLastScrollY(currentScrollY)
-
-      // Calculate scroll progress (0 to 1)
-      setScrollProgress(Math.min(Math.max(currentScrollY / totalHeight, 0), 1))
+      setScrollProgress(progress)
     }
 
-    window.addEventListener("scroll", handleScroll, { passive: true })
+    // Initial call
+    handleScroll()
+
+    window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
-  }, [lastScrollY])
+  }, [])
 
   return (
     <ScrollContext.Provider value={{ scrollY, scrollDirection, scrollProgress }}>{children}</ScrollContext.Provider>

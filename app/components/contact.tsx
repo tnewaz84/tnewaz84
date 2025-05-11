@@ -60,7 +60,6 @@ export default function Contact() {
   // Handle form submission
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true)
-    setFormSuccess(null) // Reset form success state
 
     try {
       // Try the new email function first
@@ -115,12 +114,12 @@ export default function Contact() {
   }
 
   return (
-    <section className="relative overflow-hidden bg-zinc-900 py-16 sm:py-20" id="contact">
+    <section className="relative overflow-hidden bg-zinc-900 py-20" id="contact">
       <div className="container relative z-10 mx-auto px-4">
         <ScrollAnimation animation="fadeUp">
           <div className="mx-auto max-w-2xl text-center">
-            <h2 className="mb-4 text-2xl sm:text-3xl font-bold tracking-tighter">Get in Touch</h2>
-            <p className="mb-6 sm:mb-8 text-gray-400 text-sm sm:text-base">
+            <h2 className="mb-4 text-3xl font-bold tracking-tighter sm:text-4xl">Get in Touch</h2>
+            <p className="mb-8 text-gray-400">
               Ready to transform your digital challenges into growth opportunities? Let's discuss how Tanvir can help
               your business thrive in the digital landscape.
             </p>
@@ -130,24 +129,20 @@ export default function Contact() {
         <ScrollAnimation animation="fadeUp" delay={0.2}>
           <div className="mx-auto max-w-md">
             {formSuccess && formSuccess.success ? (
-              <div className="rounded-lg bg-green-900/20 p-4 sm:p-6 text-center">
-                <CheckCircle2 className="mx-auto mb-3 sm:mb-4 h-10 w-10 sm:h-12 sm:w-12 text-green-500" />
-                <h3 className="mb-2 text-lg sm:text-xl font-bold">Thank You!</h3>
-                <p className="text-gray-300 text-sm sm:text-base">{formSuccess.message}</p>
-                <p className="mt-3 sm:mt-4 text-xs sm:text-sm text-gray-400">
-                  Your message has been sent to tnewaz84@gmail.com
-                </p>
-                <Button className="mt-4 sm:mt-6" onClick={() => setFormSuccess(null)}>
+              <div className="rounded-lg bg-green-900/20 p-6 text-center">
+                <CheckCircle2 className="mx-auto mb-4 h-12 w-12 text-green-500" />
+                <h3 className="mb-2 text-xl font-bold">Thank You!</h3>
+                <p className="text-gray-300">{formSuccess.message}</p>
+                <p className="mt-4 text-sm text-gray-400">Your message has been sent to tnewaz84@gmail.com</p>
+                <Button className="mt-6" onClick={() => setFormSuccess(null)}>
                   Send Another Message
                 </Button>
               </div>
             ) : (
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                   {formSuccess && !formSuccess.success && (
-                    <div className="rounded-lg bg-red-900/20 p-3 text-center text-red-300 text-sm">
-                      {formSuccess.message}
-                    </div>
+                    <div className="rounded-lg bg-red-900/20 p-3 text-center text-red-300">{formSuccess.message}</div>
                   )}
 
                   <FormField
@@ -234,7 +229,7 @@ export default function Contact() {
                         <FormControl>
                           <Textarea
                             placeholder="Tell me about your business challenges..."
-                            className="min-h-[100px] sm:min-h-[120px] bg-white text-black placeholder:text-gray-500"
+                            className="min-h-[120px] bg-white text-black placeholder:text-gray-500"
                             {...field}
                           />
                         </FormControl>
@@ -242,38 +237,12 @@ export default function Contact() {
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" className="w-full h-10 sm:h-12 text-sm sm:text-base" disabled={isSubmitting}>
-                    {isSubmitting ? (
-                      <span className="flex items-center justify-center">
-                        <svg
-                          className="animate-spin -ml-1 mr-3 h-4 w-4 sm:h-5 sm:w-5 text-white"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                        >
-                          <circle
-                            className="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                          ></circle>
-                          <path
-                            className="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                          ></path>
-                        </svg>
-                        Sending...
-                      </span>
-                    ) : (
-                      "Send Message"
-                    )}
+                  <Button type="submit" className="w-full h-12 text-base" disabled={isSubmitting}>
+                    {isSubmitting ? "Sending..." : "Send Message"}
                   </Button>
 
                   <div className="mt-4 text-center">
-                    <p className="text-gray-400 mb-2 text-sm">Or schedule a consultation directly:</p>
+                    <p className="text-gray-400 mb-2">Or schedule a consultation directly:</p>
                     <CalendlyBooking buttonText="Book a Free Consultation" className="w-full" />
                   </div>
                 </form>

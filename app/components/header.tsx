@@ -2,17 +2,13 @@
 
 import { useState, useEffect } from "react"
 import { Menu, X, Phone } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
-import Link from "next/link"
+import { motion } from "framer-motion"
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
-    setIsMounted(true)
-
     const handleScroll = () => {
       if (window.scrollY > 50) {
         setScrolled(true)
@@ -27,53 +23,6 @@ export default function Header() {
     }
   }, [])
 
-  // Close mobile menu when clicking outside
-  useEffect(() => {
-    if (!isOpen) return
-
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as HTMLElement
-      if (!target.closest(".mobile-menu") && !target.closest(".menu-button")) {
-        setIsOpen(false)
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-  }, [isOpen])
-
-  // Prevent body scroll when mobile menu is open
-  useEffect(() => {
-    if (!isMounted) return
-
-    if (isOpen) {
-      document.body.style.overflow = "hidden"
-    } else {
-      document.body.style.overflow = ""
-    }
-
-    return () => {
-      document.body.style.overflow = ""
-    }
-  }, [isOpen, isMounted])
-
-  const menuItems = [
-    { href: "/", label: "Home" },
-    { href: "/#services", label: "Services" },
-    { href: "/make-money-online", label: "Make Money" },
-    { href: "/design-tshirt", label: "T-Shirt Designer" },
-    { href: "/#pricing", label: "Pricing" },
-    { href: "/blog", label: "Blog" },
-    { href: "/seo-analyzer", label: "SEO Analyzer" },
-    { href: "/search-console-analyzer", label: "Search Console" },
-    { href: "/ad-management", label: "Ad Management" },
-    { href: "/streaming", label: "Streaming" },
-    { href: "/ninjam", label: "Ninjam" },
-    { href: "/#contact", label: "Contact" },
-  ].filter((item) => item.href !== "#featured-projects")
-
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -84,28 +33,86 @@ export default function Header() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center">
-              <div className="relative w-[40px] h-[40px] sm:w-[50px] sm:h-[50px]">
+            <a href="/" className="flex items-center">
+              <div className="relative w-[50px] h-[50px]">
                 <img
                   src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/tanvir%20newaz%20logo%20%281%29-TCjGk8KykAeFIutJcUZ0Yckm0nxBiA.png"
                   alt="Tanvir Newaz Logo"
                   className="w-full h-full object-contain"
                 />
               </div>
-              <span className="ml-2 text-lg sm:text-xl font-semibold text-white">Tanvir Newaz</span>
-            </Link>
+              <span className="ml-2 text-xl font-semibold text-white">Tanvir Newaz</span>
+            </a>
           </div>
 
           {/* Desktop Menu */}
-          <nav className="hidden lg:flex items-center justify-center">
-            <ul className="flex flex-wrap space-x-6 xl:space-x-8">
-              {menuItems.map((item) => (
-                <li key={item.href}>
-                  <Link href={item.href} className="text-white hover:text-gray-300 transition-colors whitespace-nowrap">
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
+          <nav className="hidden md:flex items-center justify-center">
+            <ul className="flex space-x-8">
+              <li>
+                <a href="/" className="text-white hover:text-gray-300 transition-colors">
+                  Home
+                </a>
+              </li>
+              <li>
+                <a href="/#services" className="text-white hover:text-gray-300 transition-colors">
+                  Services
+                </a>
+              </li>
+              <li>
+                <a href="/make-money-online" className="text-white hover:text-gray-300 transition-colors">
+                  Make Money
+                </a>
+              </li>
+              <li>
+                <a href="/design-tshirt" className="text-white hover:text-gray-300 transition-colors">
+                  T-Shirt Designer
+                </a>
+              </li>
+              <li>
+                <a href="/#portfolio" className="text-white hover:text-gray-300 transition-colors">
+                  Portfolio
+                </a>
+              </li>
+              <li>
+                <a href="/#pricing" className="text-white hover:text-gray-300 transition-colors">
+                  Pricing
+                </a>
+              </li>
+              <li>
+                <a href="/blog" className="text-white hover:text-gray-300 transition-colors">
+                  Blog
+                </a>
+              </li>
+              <li>
+                <a href="/seo-analyzer" className="text-white hover:text-gray-300 transition-colors">
+                  SEO Analyzer
+                </a>
+              </li>
+              <li>
+                <a href="/search-console-analyzer" className="text-white hover:text-gray-300 transition-colors">
+                  Search Console
+                </a>
+              </li>
+              <li>
+                <a href="/ad-management" className="text-white hover:text-gray-300 transition-colors">
+                  Ad Management
+                </a>
+              </li>
+              <li>
+                <a href="/streaming" className="text-white hover:text-gray-300 transition-colors">
+                  Streaming
+                </a>
+              </li>
+              <li>
+                <a href="/ninjam" className="text-white hover:text-gray-300 transition-colors">
+                  Ninjam
+                </a>
+              </li>
+              <li>
+                <a href="/#contact" className="text-white hover:text-gray-300 transition-colors">
+                  Contact
+                </a>
+              </li>
             </ul>
           </nav>
 
@@ -113,16 +120,15 @@ export default function Header() {
           <div className="hidden md:flex items-center">
             <a href="tel:+12012924983" className="flex items-center text-white hover:text-gray-300 transition-colors">
               <Phone className="h-4 w-4 mr-2" />
-              <span className="whitespace-nowrap">+1-201-292-4983</span>
+              <span>+1-201-292-4983</span>
             </a>
           </div>
 
           {/* Mobile Menu Button */}
           <button
-            className="lg:hidden text-white focus:outline-none menu-button"
+            className="md:hidden text-white focus:outline-none"
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle menu"
-            aria-expanded={isOpen}
           >
             {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
@@ -130,44 +136,145 @@ export default function Header() {
       </div>
 
       {/* Mobile Menu */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="lg:hidden bg-black/95 backdrop-blur-md mobile-menu overflow-y-auto max-h-[calc(100vh-80px)]"
-          >
-            <div className="container mx-auto px-4 py-4">
-              <nav>
-                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {menuItems.map((item) => (
-                    <li key={item.href}>
-                      <Link
-                        href={item.href}
-                        className="block text-white hover:text-gray-300 transition-colors py-2"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        {item.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
-              <div className="mt-6">
-                <a
-                  href="tel:+12012924983"
-                  className="flex items-center text-white hover:text-gray-300 transition-colors"
-                >
-                  <Phone className="h-4 w-4 mr-2" />
-                  <span>+1-201-292-4983</span>
-                </a>
-              </div>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.3 }}
+          className="md:hidden bg-black/95 backdrop-blur-md"
+        >
+          <div className="container mx-auto px-4 py-4">
+            <nav>
+              <ul className="flex flex-col space-y-4">
+                <li>
+                  <a
+                    href="/"
+                    className="block text-white hover:text-gray-300 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Home
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/#services"
+                    className="block text-white hover:text-gray-300 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Services
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/make-money-online"
+                    className="block text-white hover:text-gray-300 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Make Money
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/design-tshirt"
+                    className="block text-white hover:text-gray-300 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    T-Shirt Designer
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/#portfolio"
+                    className="block text-white hover:text-gray-300 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Portfolio
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/#pricing"
+                    className="block text-white hover:text-gray-300 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Pricing
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/blog"
+                    className="block text-white hover:text-gray-300 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Blog
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/seo-analyzer"
+                    className="block text-white hover:text-gray-300 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    SEO Analyzer
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/search-console-analyzer"
+                    className="block text-white hover:text-gray-300 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Search Console
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/ad-management"
+                    className="block text-white hover:text-gray-300 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Ad Management
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/streaming"
+                    className="block text-white hover:text-gray-300 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Streaming
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/ninjam"
+                    className="block text-white hover:text-gray-300 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Ninjam
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/#contact"
+                    className="block text-white hover:text-gray-300 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Contact
+                  </a>
+                </li>
+              </ul>
+            </nav>
+            <div className="mt-6">
+              <a href="tel:+12012924983" className="flex items-center text-white hover:text-gray-300 transition-colors">
+                <Phone className="h-4 w-4 mr-2" />
+                <span>+1-201-292-4983</span>
+              </a>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+        </motion.div>
+      )}
     </header>
   )
 }

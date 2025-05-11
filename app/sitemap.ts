@@ -1,7 +1,17 @@
 import type { MetadataRoute } from "next"
+import { getAllLocationSlugs } from "./lib/location-data"
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tanvirnewaz.com"
+
+  // Get all location pages
+  const locationSlugs = getAllLocationSlugs()
+  const locationUrls = locationSlugs.map(({ country, city }) => ({
+    url: `${baseUrl}/locations/${country}/${city}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }))
 
   return [
     {
@@ -16,6 +26,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.8,
     },
+    {
+      url: `${baseUrl}/locations`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    ...locationUrls,
     {
       url: `${baseUrl}/seo-analyzer`,
       lastModified: new Date(),
