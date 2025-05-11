@@ -3,8 +3,6 @@
 import { useRef, useEffect } from "react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import Image from "next/image"
-import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
 
 // Register GSAP plugins
@@ -37,7 +35,8 @@ const portfolioItems: PortfolioItem[] = [
     id: "crypto-platform",
     title: "Cryptocurrency Trading Platform",
     description: "Developed a secure, high-performance trading platform with real-time data visualization.",
-    image: "/placeholder.svg?key=dof67",
+    image:
+      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/placeholder-ob7miW3mUreePYfXdVwkpFWHthzoR5.svg?height=400&width=600&query=cryptocurrency%20trading%20platform",
     link: "#",
     tags: ["React", "Node.js", "WebSockets", "Fintech"],
   },
@@ -132,7 +131,7 @@ export default function GsapPortfolio() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="py-20 bg-black">
+    <section ref={sectionRef} className="py-20 bg-black" id="featured-projects">
       <div className="container mx-auto px-4">
         <h2 ref={headingRef} className="text-3xl md:text-4xl font-bold mb-12 text-center">
           Featured Projects
@@ -140,7 +139,7 @@ export default function GsapPortfolio() {
 
         <div ref={itemsRef} className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {portfolioItems.map((item) => (
-            <Link
+            <a
               href={item.link}
               key={item.id}
               className="group block bg-zinc-900 rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl"
@@ -149,7 +148,16 @@ export default function GsapPortfolio() {
             >
               <div className="relative h-64 overflow-hidden">
                 <div className="portfolio-image w-full h-full transform transition-transform duration-500">
-                  <Image src={item.image || "/placeholder.svg"} alt={item.title} fill className="object-cover" />
+                  <img
+                    src={item.image || "/placeholder.svg"}
+                    alt={item.title}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src =
+                        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/placeholder-ob7miW3mUreePYfXdVwkpFWHthzoR5.svg?height=400&width=600&query=project%20placeholder"
+                      e.currentTarget.onerror = null
+                    }}
+                  />
                 </div>
                 <div className="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                   <ArrowUpRight className="w-12 h-12 text-white" />
@@ -167,8 +175,18 @@ export default function GsapPortfolio() {
                 <h3 className="text-xl font-bold mb-2 group-hover:text-green-400 transition-colors">{item.title}</h3>
                 <p className="text-gray-400">{item.description}</p>
               </div>
-            </Link>
+            </a>
           ))}
+        </div>
+
+        <div className="mt-12 text-center">
+          <a
+            href="#portfolio"
+            className="inline-flex items-center gap-2 bg-white text-black px-6 py-3 rounded-md font-medium hover:bg-white/90 transition-colors"
+          >
+            View All Projects
+            <ArrowUpRight className="h-4 w-4" />
+          </a>
         </div>
       </div>
     </section>

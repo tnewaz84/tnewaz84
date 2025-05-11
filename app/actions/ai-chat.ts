@@ -1,9 +1,8 @@
 "use server"
 
-import { generateChatCompletion, convertToGroqMessages } from "@/lib/groq"
+import { generateChatCompletion } from "@/lib/groq"
 import { getCache, setCache } from "@/lib/redis"
 import { revalidatePath } from "next/cache"
-import type { Message } from "ai"
 
 // Cache TTL in seconds (24 hours)
 const CACHE_TTL = 86400
@@ -33,59 +32,86 @@ Your job is to answer customer questions about digital marketing services, provi
 
 Keep your responses friendly, helpful, and concise. If you don't know something specific, suggest they call or email directly.`
 
-export async function generateChatResponse(messages: Message[]) {
+// Function to send a message and get a response (for client components)
+export async function sendMessage(message: string) {
+  if (!message || !message.trim()) {
+    return { success: false, error: "Message cannot be empty" }
+  }
+
   try {
-    // Check if we have a cached response for the last user message
-    const lastUserMessage = messages.filter((m) => m.role === "user").pop()
+    // Check if we have a cached response
+    const cacheKey = createCacheKey(message)
+    let cachedResponse = null
 
-    if (lastUserMessage) {
-      const cacheKey = createCacheKey(lastUserMessage.content)
-      const cachedResponse = await getCache<{ content: string }>(cacheKey)
+    try {
+      cachedResponse = await getCache<{ content: string }>(cacheKey)
+    } catch (cacheError) {
+      console.warn("Cache retrieval error:", cacheError)
+      // Continue without cache
+    }
 
-      if (cachedResponse) {
-        console.log("Cache hit for message:", lastUserMessage.content)
-        return {
-          success: true,
-          text: cachedResponse.content,
-          cached: true,
-        }
+    if (cachedResponse) {
+      console.log("Cache hit for message:", message)
+      return {
+        success: true,
+        content: cachedResponse.content,
+        cached: true,
       }
     }
 
     // No cache hit, generate a new response
-    console.log("Cache miss, generating new response")
+    console.log("Cache miss for message:", message)
 
-    // Convert messages to Groq format
-    const groqMessages = convertToGroqMessages(messages, systemPrompt)
-
-    const response = await generateChatCompletion(groqMessages, {
-      temperature: 0.7,
-      maxTokens: 500,
-    })
-
-    if (!response.success || !response.content) {
+    // Check if GROQ API key is available
+    if (!process.env.GROQ_API_KEY) {
       return {
-        success: false,
-        text: "I'm sorry, I couldn't generate a response. Please try again later.",
+        success: true, // Return success but with a fallback message
+        content:
+          "I'm currently in maintenance mode. Please email tnewaz84@gmail.com or call +1-201-292-4983 for immediate assistance.",
+        cached: false,
       }
     }
 
-    // Cache the successful response if there was a user message
-    if (lastUserMessage) {
-      const cacheKey = createCacheKey(lastUserMessage.content)
-      await setCache(cacheKey, { content: response.content }, CACHE_TTL)
-    }
+    const response = await generateChatCompletion(
+      [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: message },
+      ],
+      {
+        temperature: 0.7,
+        maxTokens: 500,
+      },
+    )
 
-    return {
-      success: true,
-      text: response.content,
-      cached: false,
+    if (response.success && response.content) {
+      // Cache the successful response
+      try {
+        await setCache(cacheKey, { content: response.content }, CACHE_TTL)
+      } catch (cacheError) {
+        console.warn("Cache storage error:", cacheError)
+        // Continue without caching
+      }
+
+      return {
+        success: true,
+        content: response.content,
+        cached: false,
+      }
+    } else {
+      return {
+        success: true, // Return success but with a fallback message
+        content:
+          "I'm having trouble connecting to my knowledge base right now. Please email tnewaz84@gmail.com or call +1-201-292-4983 for immediate assistance.",
+        cached: false,
+      }
     }
   } catch (error) {
-    console.error("Error generating AI response:", error)
+    console.error("Error in sendMessage:", error)
     return {
-      success: false,
-      text: "I'm having trouble connecting right now. Please try again or contact us directly at tnewaz84@gmail.com or +1-201-292-4983.",
+      success: true, // Return success but with a fallback message
+      content:
+        "I'm having technical difficulties right now. Please email tnewaz84@gmail.com or call +1-201-292-4983 for immediate assistance.",
+      cached: false,
     }
   }
 }
@@ -110,58 +136,6 @@ export async function clearAIChatCache() {
     return { success: true, message: `Cleared ${keys.length} cache entries` }
   } catch (error) {
     console.error("Error clearing AI chat cache:", error)
-    return { success: false, error: (error as Error).message }
-  }
-}
-
-// Function to send a message and get a response (for client components)
-export async function sendMessage(message: string) {
-  try {
-    if (!message.trim()) {
-      return { success: false, error: "Message cannot be empty" }
-    }
-
-    // Check if we have a cached response
-    const cacheKey = createCacheKey(message)
-    const cachedResponse = await getCache<{ content: string }>(cacheKey)
-
-    if (cachedResponse) {
-      console.log("Cache hit for message:", message)
-      return {
-        success: true,
-        content: cachedResponse.content,
-        cached: true,
-      }
-    }
-
-    // No cache hit, generate a new response
-    console.log("Cache miss for message:", message)
-
-    const response = await generateChatCompletion(
-      [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: message },
-      ],
-      {
-        temperature: 0.7,
-        maxTokens: 500,
-      },
-    )
-
-    if (response.success) {
-      // Cache the successful response
-      await setCache(cacheKey, { content: response.content }, CACHE_TTL)
-
-      return {
-        success: true,
-        content: response.content,
-        cached: false,
-      }
-    } else {
-      return { success: false, error: response.error || "Failed to generate response" }
-    }
-  } catch (error) {
-    console.error("Error in sendMessage:", error)
     return { success: false, error: (error as Error).message }
   }
 }

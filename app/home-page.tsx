@@ -1,0 +1,240 @@
+"use client"
+
+import { useEffect, useState } from "react"
+import Link from "next/link"
+import { ArrowRight } from "lucide-react"
+import GsapHero from "./components/gsap-hero"
+import GsapTextAnimation from "./components/gsap-text-animation"
+import { GsapScrollAnimation } from "./components/gsap-scroll-animation"
+import CaseStudy from "./components/case-study"
+import Pricing from "./components/pricing"
+import Contact from "./components/contact"
+import Gallery from "./components/gallery"
+import WhyChooseUs from "./components/why-choose-us"
+import SeoAnalyzerCta from "./components/seo-analyzer-cta"
+import ConsultationSection from "./components/consultation-section"
+import { useMediaQuery } from "@/hooks/use-media-query"
+
+export default function HomePage() {
+  // Add state to track if component is mounted
+  const [isMounted, setIsMounted] = useState(false)
+
+  // Use the media query hook for responsive behavior
+  const isMobile = useMediaQuery("(max-width: 767px)")
+  const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 1023px)")
+
+  // Set mounted state after component mounts
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  // Don't render until component is mounted to avoid hydration issues
+  if (!isMounted) {
+    return null
+  }
+
+  return (
+    <main className="min-h-screen bg-black text-white">
+      {/* Hero Section with GSAP */}
+      <GsapHero showAuthButtons={true} />
+
+      {/* Build, Brand, Protect Section */}
+      <WhyChooseUs />
+
+      {/* Value Proposition Section with GSAP */}
+      <section className="py-12 md:py-16 lg:py-20 bg-black">
+        <div className="container mx-auto max-w-4xl px-4 text-center">
+          <GsapTextAnimation
+            as="h2"
+            animation="words"
+            className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6 md:mb-8"
+          >
+            I help founders build growth engines using SEO, dev, and data.
+            <br className="hidden md:block" />
+            <span className="block mt-2">
+              Not just traffic. Not just pretty websites. I build systems that convert and scale.
+            </span>
+          </GsapTextAnimation>
+
+          <GsapTextAnimation
+            as="p"
+            animation="fade"
+            delay={0.3}
+            className="text-base sm:text-lg text-gray-300 max-w-3xl mx-auto"
+          >
+            My approach combines cutting-edge technology with proven marketing principles to help clients achieve
+            measurable results and sustainable growth.
+          </GsapTextAnimation>
+        </div>
+      </section>
+
+      {/* Real Search Results Section */}
+      <section className="py-12 md:py-16 lg:py-20 bg-black">
+        <div className="container mx-auto max-w-5xl px-4">
+          <GsapTextAnimation
+            as="h2"
+            animation="chars"
+            className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 md:mb-8 lg:mb-10 text-center"
+          >
+            Real Search Results
+          </GsapTextAnimation>
+
+          <GsapScrollAnimation animation="fadeUp" className="grid gap-4 sm:gap-6 md:gap-8">
+            {!isMobile ? (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                <div className="bg-zinc-900 p-3 sm:p-4 rounded-lg shadow-lg">
+                  <div className="relative">
+                    <img
+                      src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/485087963_1152033056382378_3665350076210089696_n-5qu4ys3eCAJtp2qI6LG7HUw72eT6pO.png"
+                      alt="Google search results showing Epic Fences LLC ranking #1"
+                      className="w-full rounded-lg shadow-lg"
+                      loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.src = "/search-results.png"
+                        e.currentTarget.alt = "Placeholder for search results"
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="bg-zinc-900 p-3 sm:p-4 rounded-lg shadow-lg">
+                  <div className="relative">
+                    <img
+                      src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/484631145_990426823058429_5463226980749305168_n-rT1iCHd4ONKtQ369xyA1V9EKvMheF5.png"
+                      alt="Google search results for fence company in Canon City"
+                      className="w-full rounded-lg shadow-lg"
+                      loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.src = "/search-results.png"
+                        e.currentTarget.alt = "Placeholder for search results"
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="bg-zinc-900 p-3 sm:p-4 rounded-lg shadow-lg md:col-span-2 lg:col-span-1">
+                  <div className="relative">
+                    <img
+                      src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/485084124_1054949853085477_9177294864128396703_n-sEiEawzLadQXb6STliFeV4UJqBN380.png"
+                      alt="Google search results for fence installer in Canon City"
+                      className="w-full rounded-lg shadow-lg"
+                      loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.src = "/search-results.png"
+                        e.currentTarget.alt = "Placeholder for search results"
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              // On mobile, only show one image to improve performance
+              <div className="bg-zinc-900 p-3 rounded-lg shadow-lg">
+                <div className="relative">
+                  <img
+                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/485087963_1152033056382378_3665350076210089696_n-5qu4ys3eCAJtp2qI6LG7HUw72eT6pO.png"
+                    alt="Google search results showing Epic Fences LLC ranking #1"
+                    className="w-full rounded-lg shadow-lg"
+                    loading="lazy"
+                    onError={(e) => {
+                      e.currentTarget.src = "/search-results.png"
+                      e.currentTarget.alt = "Placeholder for search results"
+                    }}
+                  />
+                </div>
+                <p className="text-center text-xs sm:text-sm mt-3 text-gray-400">Swipe for more examples</p>
+              </div>
+            )}
+          </GsapScrollAnimation>
+        </div>
+      </section>
+
+      {/* Make Money Online Section with GSAP */}
+      <section className="py-12 md:py-16 lg:py-20 bg-zinc-900">
+        <div className="container mx-auto max-w-4xl px-4 text-center">
+          <GsapTextAnimation
+            as="h2"
+            animation="words"
+            className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6"
+          >
+            Make Money Online
+          </GsapTextAnimation>
+
+          <GsapTextAnimation
+            as="p"
+            animation="fade"
+            delay={0.2}
+            className="text-base sm:text-lg text-gray-300 max-w-3xl mx-auto mb-6 sm:mb-8"
+          >
+            Discover multiple ways to earn money online, from passive income with blockchain networks to creating your
+            own cryptocurrency and earning referral bonuses.
+          </GsapTextAnimation>
+
+          <GsapScrollAnimation animation="fadeUp">
+            <Link
+              href="/make-money-online"
+              className="inline-flex items-center justify-center gap-2 bg-white text-black px-4 sm:px-6 py-2 sm:py-3 rounded-md text-sm sm:text-base font-medium hover:bg-white/90 transition-colors"
+            >
+              Explore Money-Making Opportunities
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </GsapScrollAnimation>
+        </div>
+      </section>
+
+      {/* Join Our Community Section with GSAP */}
+      <section className="py-12 md:py-16 lg:py-20 bg-black">
+        <div className="container mx-auto max-w-4xl px-4 text-center">
+          <GsapTextAnimation
+            as="h2"
+            animation="chars"
+            className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6"
+          >
+            Join Our Community
+          </GsapTextAnimation>
+
+          <GsapTextAnimation
+            as="p"
+            animation="fade"
+            delay={0.2}
+            className="text-base sm:text-lg text-gray-300 mb-6 sm:mb-8 max-w-3xl mx-auto"
+          >
+            Get exclusive access to our strategies and connect with other successful businesses. Learn from our
+            community of entrepreneurs and digital growth experts.
+          </GsapTextAnimation>
+
+          <GsapScrollAnimation animation="stagger" className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/forum/register"
+              className="bg-white text-black px-4 sm:px-6 py-2 sm:py-3 rounded-md text-sm sm:text-base font-medium hover:bg-white/90 transition-colors"
+            >
+              Register
+            </Link>
+            <Link
+              href="/forum/login"
+              className="border border-white text-white px-4 sm:px-6 py-2 sm:py-3 rounded-md text-sm sm:text-base font-medium hover:bg-white/10 transition-colors"
+            >
+              Login
+            </Link>
+          </GsapScrollAnimation>
+        </div>
+      </section>
+
+      {/* Gallery Section */}
+      <Gallery />
+
+      {/* Case Study Section */}
+      <CaseStudy />
+
+      {/* Pricing Section */}
+      <Pricing />
+
+      {/* Consultation Section */}
+      <ConsultationSection />
+
+      {/* SEO Analyzer CTA Section */}
+      <SeoAnalyzerCta />
+
+      {/* Contact Section */}
+      <Contact />
+    </main>
+  )
+}

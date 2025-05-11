@@ -1,10 +1,54 @@
 import { Redis } from "@upstash/redis"
 
-// Initialize Redis client with environment variables
-export const redis = new Redis({
-  url: process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_URL || "",
-  token: process.env.KV_REST_API_TOKEN || process.env.KV_REST_API_TOKEN || "",
-})
+// Initialize Redis client with environment variables and fallback
+export const redis = (() => {
+  try {
+    const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_URL || ""
+    const token = process.env.KV_REST_API_TOKEN || process.env.KV_REST_API_READ_ONLY_TOKEN || ""
+
+    if (!url || !token) {
+      console.warn("Redis URL or token is missing. Using mock Redis client.")
+      return createMockRedisClient()
+    }
+
+    return new Redis({
+      url,
+      token,
+      automaticDeserialization: true,
+    })
+  } catch (error) {
+    console.error("Failed to initialize Redis client:", error)
+    return createMockRedisClient()
+  }
+})()
+
+// Create a mock Redis client for development or when Redis is unavailable
+function createMockRedisClient() {
+  const mockStorage = new Map<string, any>()
+
+  return {
+    get: async (key: string) => mockStorage.get(key) || null,
+    set: async (key: string, value: any, options?: any) => {
+      mockStorage.set(key, value)
+      return "OK"
+    },
+    del: async (key: string) => {
+      mockStorage.delete(key)
+      return 1
+    },
+    keys: async (pattern: string) => {
+      // Simple pattern matching for mock client
+      const allKeys = Array.from(mockStorage.keys())
+      if (pattern === "*") return allKeys
+
+      // Very basic wildcard matching
+      const regex = new RegExp(pattern.replace("*", ".*"))
+      return allKeys.filter((key) => regex.test(key))
+    },
+    info: async () => "mock_info",
+    ping: async () => "PONG",
+  } as unknown as Redis
+}
 
 // Get a value from cache
 export async function getCache<T>(key: string): Promise<T | null> {

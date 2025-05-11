@@ -1,168 +1,175 @@
 "use client"
 
+import type React from "react"
+
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
-import { ArrowRight, Search } from "lucide-react"
-
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { ScrollAnimation } from "./scroll-animation"
-import { sendEmail } from "../actions/email"
-
-// Form schema for validation
-const formSchema = z.object({
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
-  url: z.string().url({
-    message: "Please enter a valid URL.",
-  }),
-})
+import { motion } from "framer-motion"
+import { Search } from "lucide-react"
 
 export default function SeoAnalyzerCta() {
-  const router = useRouter()
+  const [url, setUrl] = useState("")
+  const [email, setEmail] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [formSuccess, setFormSuccess] = useState<boolean>(false)
+  const router = useRouter()
 
-  // Initialize form
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-      url: "",
-    },
-    mode: "onBlur", // Add explicit mode to prevent resolver issues
-  })
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
 
-  // Handle form submission
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!url) return
+
     setIsSubmitting(true)
 
-    try {
-      // Send email notification
-      await sendEmail({
-        name: "SEO Analysis Request",
-        email: values.email,
-        phone: "Not provided",
-        bookingSection: "SEO Analysis",
-        message: `Please analyze this URL: ${values.url}`,
-        type: "seo-analysis",
-      }).catch((error) => {
-        console.error("Error sending email notification:", error)
-      })
-
-      // Store the URL in session storage for use on the SEO analyzer page
-      if (typeof window !== "undefined") {
-        sessionStorage.setItem("seoAnalysisUrl", values.url)
-        sessionStorage.setItem("seoAnalysisEmail", values.email)
-      }
-
-      setFormSuccess(true)
-
-      // Redirect to the SEO analyzer page with the URL as a query parameter
-      setTimeout(() => {
-        router.push(`/seo-analyzer?url=${encodeURIComponent(values.url)}`)
-      }, 1500)
-    } catch (error) {
-      console.error("Error submitting form:", error)
-    } finally {
-      setIsSubmitting(false)
+    // Store the URL and email in sessionStorage
+    sessionStorage.setItem("seoAnalysisUrl", url)
+    if (email) {
+      sessionStorage.setItem("seoAnalysisEmail", email)
     }
+
+    // Redirect to the SEO analyzer page
+    router.push(`/seo-analyzer?url=${encodeURIComponent(url)}`)
   }
 
   return (
-    <section className="py-16 md:py-20 bg-zinc-900" id="seo-analysis">
-      <div className="container mx-auto px-4">
-        <ScrollAnimation animation="fadeUp">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Free SEO Analysis</h2>
-            <p className="text-lg text-gray-300 mb-8">
-              Get a comprehensive analysis of your website's SEO performance. Enter your email and website URL below to
-              receive a detailed report on how to improve your search engine rankings.
-            </p>
-          </div>
-        </ScrollAnimation>
+    <section className="py-12 md:py-16 lg:py-20 bg-black relative overflow-hidden">
+      {/* Background pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600"></div>
+        <div
+          className="absolute inset-0"
+          style={{ backgroundImage: "url('/abstract-geometric-shapes.png')", backgroundSize: "cover" }}
+        ></div>
+      </div>
 
-        <ScrollAnimation animation="fadeUp" delay={0.2}>
-          <div className="max-w-2xl mx-auto">
-            {formSuccess ? (
-              <div className="bg-green-900/20 p-6 rounded-lg text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-900/30 mb-4">
-                  <Search className="h-8 w-8 text-green-500" />
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="max-w-3xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4">Free SEO Analysis for Your Website</h2>
+            <p className="text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">
+              Discover how your website performs in search engines and get actionable recommendations to improve your
+              rankings.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+          >
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    value={url}
+                    onChange={(e) => setUrl(e.target.value)}
+                    placeholder="Enter your website URL"
+                    className="w-full px-4 py-3 rounded-md bg-white text-black placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
                 </div>
-                <h3 className="text-xl font-bold mb-2">Analysis Started!</h3>
-                <p className="text-gray-300 mb-4">
-                  We're analyzing your website now. You'll be redirected to view your results in a moment.
-                </p>
-                <div className="w-full bg-gray-700 h-2 rounded-full overflow-hidden">
-                  <div className="bg-green-500 h-full animate-[progress_1.5s_ease-in-out]"></div>
+                <button
+                  type="submit"
+                  disabled={isSubmitting || !url}
+                  className="px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
+                >
+                  <Search className="h-4 w-4 mr-2" />
+                  <span className="text-sm sm:text-base">Analyze Now</span>
+                </button>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center gap-3">
+                <div className="flex-1">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Email (optional) to receive detailed report"
+                    className="w-full px-4 py-3 rounded-md bg-white text-black placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div className="w-full sm:w-auto text-xs text-gray-400 text-left sm:text-right">
+                  We respect your privacy
                 </div>
               </div>
-            ) : (
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input
-                              placeholder="Your email address"
-                              {...field}
-                              className="bg-white text-black placeholder:text-gray-500 h-12"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="url"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input
-                              placeholder="https://yourwebsite.com"
-                              {...field}
-                              className="bg-white text-black placeholder:text-gray-500 h-12"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <Button
-                    type="submit"
-                    className="w-full h-12 text-base flex items-center justify-center gap-2"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? "Analyzing..." : "Analyze My Website"}
-                    {!isSubmitting && <ArrowRight className="h-5 w-5" />}
-                  </Button>
-                </form>
-              </Form>
-            )}
-          </div>
-        </ScrollAnimation>
+            </form>
+          </motion.div>
 
-        <style jsx global>{`
-          @keyframes progress {
-            0% {
-              width: 0%;
-            }
-            100% {
-              width: 100%;
-            }
-          }
-        `}</style>
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            viewport={{ once: true }}
+            className="mt-8 flex flex-wrap justify-center gap-4 sm:gap-8"
+          >
+            <div className="flex items-center">
+              <div className="h-8 w-8 bg-blue-500/20 rounded-full flex items-center justify-center mr-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-blue-400"
+                >
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <span className="text-sm">Free Analysis</span>
+            </div>
+            <div className="flex items-center">
+              <div className="h-8 w-8 bg-blue-500/20 rounded-full flex items-center justify-center mr-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-blue-400"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="16" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+              </div>
+              <span className="text-sm">Actionable Insights</span>
+            </div>
+            <div className="flex items-center">
+              <div className="h-8 w-8 bg-blue-500/20 rounded-full flex items-center justify-center mr-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-blue-400"
+                >
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+              </div>
+              <span className="text-sm">No Obligation</span>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </section>
   )
