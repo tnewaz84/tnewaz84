@@ -12,41 +12,39 @@ export default function Portfolio() {
   const works = [
     {
       id: 1,
-      title: "Epic Fences LLC",
+      title: "Water Damage Repair",
       category: "web-development",
       image:
-        "https://sjc.microlink.io/spHlw8ksIwvyRWdVxhvD2uG140YoNlwNU8zT7Cr7dhobP4DiIDVC821yEcVKwreC0d9-KwTe1hO8uv58ng5NMA.jpeg",
-      url: "https://v0-epicferncesllc.vercel.app/",
+        "https://sjc.microlink.io/a85ZjOTe3oHz0BOMiZ44_1hiPIx_kT_qiY80dQ7UBsUtvHL_YXyJuUAp6F5uoGch9_Z8jj12nnyCYQlbPTeOig.jpeg",
+      url: "http://waterdamagerepair.pro/",
       description:
-        "A modern, responsive website for a fencing company with a sleek dark theme and intuitive navigation.",
+        "A professional website for emergency water damage restoration services in Colorado Springs with 24/7 response capabilities.",
     },
     {
       id: 2,
-      title: "1395 Zero Seven",
+      title: "Culinary Experience",
       category: "web-development",
       image:
-        "https://sjc.microlink.io/rxNE0MnImvU6mx0-0SX1O1f4UIG88j5Vxz-pmSt61arkU6LyLayymwhFQlXsCB83bmUR4orEkUInJVUOJ5iLWQ.jpeg",
-      url: "https://1395zeroseven.pro/",
-      description: "A dynamic business website featuring 3D typography and a clean, professional aesthetic.",
+        "https://sjc.microlink.io/4ugSWDOwAvEgKTmEkuzpg78sOqT6x6u4T7DM6U6ratFZ4z11GnJdRgVLgTf4ld8TVsnhdES1MbRYUyfLgG6TTw.jpeg",
+      url: "https://www.culinaryexperience.pro/",
+      description:
+        "An elegant website for Flamingo Pete's private chef and catering services featuring professional food photography and intuitive booking system.",
     },
     {
       id: 3,
-      title: "Flamingo Catering Jax",
-      category: "e-commerce",
-      image:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/flamingocateringjax-VWlDKFIjrlRwfma0B53WpZCiQRVph4.png",
-      url: "https://shop.flamingocateringjax.com/",
-      description:
-        "An e-commerce platform for a catering business with vibrant visuals and seamless shopping experience.",
+      title: "Epic Fences Pueblo",
+      category: "web-development",
+      image: "/modern-fencing-website.png",
+      url: "https://www.epicfencespueblo.com/",
+      description: "A responsive website for a fencing company in Pueblo with modern design and service showcase.",
     },
     {
       id: 4,
-      title: "Black Tree Lab",
-      category: "e-commerce",
-      image:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/blacktreelab.png-75NCldtCB3yu7VKnyoccRMLKhXNTfZ.jpeg",
-      url: "https://blacktreelab.co/",
-      description: "A luxury jewelry e-commerce site with elegant design and sophisticated user experience.",
+      title: "1395 Zero Seven",
+      category: "web-development",
+      image: "/business-website-3d-typography.png",
+      url: "http://1395zeroseven.pro/",
+      description: "A dynamic business website featuring 3D typography and a clean, professional aesthetic.",
     },
     {
       id: 5,
@@ -70,7 +68,7 @@ export default function Portfolio() {
         "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/483597129_642187501748028_4996090730570525978_n-OW6OMaFJ400fjpQqvdKlOssgsi9AA1.png",
       url: "https://v0-epicferncesllc.vercel.app/",
       description:
-        "Custom AI chatbot solution for Epic Fences LLC that provides instant customer support, answers fencing questions, and helps with service inquiries 24/7.",
+        "Custom AI chatbot solution that provides instant customer support, answers questions, and helps with service inquiries 24/7.",
     },
   ]
 

@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { ArrowRight } from "lucide-react"
 import GsapHero from "./components/gsap-hero"
-import GsapPortfolio from "./components/gsap-portfolio"
+// import GsapPortfolio from "./components/gsap-portfolio"
 import GsapTextAnimation from "./components/gsap-text-animation"
 import { GsapScrollAnimation } from "./components/gsap-scroll-animation"
 import CaseStudy from "./components/case-study"
@@ -14,6 +13,12 @@ import Gallery from "./components/gallery"
 import WhyChooseUs from "./components/why-choose-us"
 import SeoAnalyzerCta from "./components/seo-analyzer-cta"
 import ConsultationSection from "./components/consultation-section"
+import dynamic from "next/dynamic"
+
+// Dynamically import the LocationsSection component
+const LocationsSection = dynamic(() => import("./components/locations-section"), {
+  ssr: false,
+})
 
 export default function Page() {
   // Add state to track if we're on mobile and if component is mounted
@@ -137,38 +142,8 @@ export default function Page() {
         </div>
       </section>
 
-      {/* Make Money Online Section with GSAP */}
-      <section className="py-16 md:py-20 bg-zinc-900">
-        <div className="container mx-auto max-w-4xl px-4 text-center">
-          {isMounted && (
-            <>
-              <GsapTextAnimation as="h2" animation="words" className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6">
-                Make Money Online
-              </GsapTextAnimation>
-
-              <GsapTextAnimation
-                as="p"
-                animation="fade"
-                delay={0.2}
-                className="text-lg text-gray-300 max-w-3xl mx-auto mb-8"
-              >
-                Discover multiple ways to earn money online, from passive income with blockchain networks to creating
-                your own cryptocurrency and earning referral bonuses.
-              </GsapTextAnimation>
-
-              <GsapScrollAnimation animation="fadeUp">
-                <Link
-                  href="/make-money-online"
-                  className="inline-flex items-center justify-center gap-2 bg-white text-black px-6 py-3 rounded-md font-medium hover:bg-white/90 transition-colors"
-                >
-                  Explore Money-Making Opportunities
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </GsapScrollAnimation>
-            </>
-          )}
-        </div>
-      </section>
+      {/* Locations Map Section */}
+      <LocationsSection />
 
       {/* Join Our Community Section with GSAP */}
       <section className="py-16 md:py-20 bg-black">
@@ -212,7 +187,7 @@ export default function Page() {
       <Gallery />
 
       {/* Portfolio Section with GSAP */}
-      {isMounted && <GsapPortfolio />}
+      {/* {isMounted && <GsapPortfolio />} */}
 
       {/* Case Study Section */}
       <CaseStudy />

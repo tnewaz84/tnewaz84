@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
+import { isBlobUrl } from "@/lib/blob-storage"
 
 interface OptimizedImageProps {
   src: string
@@ -31,6 +32,9 @@ export default function OptimizedImage({
     setImgSrc(src)
   }, [src])
 
+  // Determine if the image is from Vercel Blob Storage
+  const isBlob = isBlobUrl(imgSrc)
+
   return (
     <div className={`relative overflow-hidden ${className}`} style={{ width: "100%", height: "auto" }}>
       <Image
@@ -51,6 +55,9 @@ export default function OptimizedImage({
           width: "100%",
           height: "auto",
         }}
+        // If it's a Blob URL, we don't need to specify unoptimized
+        // as Vercel's Image Optimization works with Blob Storage
+        unoptimized={false}
       />
       {isLoading && (
         <div

@@ -59,18 +59,8 @@ export default function Header() {
                 </a>
               </li>
               <li>
-                <a href="/make-money-online" className="text-white hover:text-gray-300 transition-colors">
-                  Make Money
-                </a>
-              </li>
-              <li>
                 <a href="/design-tshirt" className="text-white hover:text-gray-300 transition-colors">
                   T-Shirt Designer
-                </a>
-              </li>
-              <li>
-                <a href="/#portfolio" className="text-white hover:text-gray-300 transition-colors">
-                  Portfolio
                 </a>
               </li>
               <li>
@@ -167,29 +157,11 @@ export default function Header() {
                 </li>
                 <li>
                   <a
-                    href="/make-money-online"
-                    className="block text-white hover:text-gray-300 transition-colors"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Make Money
-                  </a>
-                </li>
-                <li>
-                  <a
                     href="/design-tshirt"
                     className="block text-white hover:text-gray-300 transition-colors"
                     onClick={() => setIsOpen(false)}
                   >
                     T-Shirt Designer
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="/#portfolio"
-                    className="block text-white hover:text-gray-300 transition-colors"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Portfolio
                   </a>
                 </li>
                 <li>
