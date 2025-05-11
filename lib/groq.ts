@@ -1,3 +1,5 @@
+"use server"
+
 import { Groq } from "groq-sdk"
 
 // Message type for Groq
@@ -6,28 +8,27 @@ export type GroqMessage = {
   content: string
 }
 
-// Initialize Groq client with error handling - only on server side
-export const groq = (() => {
-  // Check if we're on the server side
-  if (typeof window === "undefined") {
-    try {
-      const apiKey = process.env.GROQ_API_KEY
+// Initialize Groq client with error handling
+let groqClient: Groq | null = null
 
-      if (!apiKey) {
-        console.warn("GROQ API key is missing. Using mock client.")
-        return createMockGroqClient()
-      }
+export const getGroqClient = () => {
+  if (groqClient) return groqClient
 
-      return new Groq({ apiKey })
-    } catch (error) {
-      console.error("Failed to initialize Groq client:", error)
+  try {
+    const apiKey = process.env.GROQ_API_KEY
+
+    if (!apiKey) {
+      console.warn("GROQ API key is missing. Using mock client.")
       return createMockGroqClient()
     }
-  } else {
-    // Return mock client on client side
+
+    groqClient = new Groq({ apiKey })
+    return groqClient
+  } catch (error) {
+    console.error("Failed to initialize Groq client:", error)
     return createMockGroqClient()
   }
-})()
+}
 
 // Create a mock Groq client for development or when Groq is unavailable
 function createMockGroqClient() {
@@ -50,7 +51,7 @@ function createMockGroqClient() {
   } as unknown as Groq
 }
 
-// Generate chat completion with Groq - ensure this is only called server-side
+// Generate chat completion with Groq
 export async function generateChatCompletion(
   messages: GroqMessage[],
   options: {
@@ -59,14 +60,6 @@ export async function generateChatCompletion(
     model?: string
   } = {},
 ) {
-  // Check if we're on the client side
-  if (typeof window !== "undefined") {
-    return {
-      success: false,
-      error: "Groq API can only be called from server-side code.",
-    }
-  }
-
   try {
     const { temperature = 0.7, maxTokens = 1000, model = "llama3-70b-8192" } = options
 
@@ -78,7 +71,9 @@ export async function generateChatCompletion(
       }
     }
 
-    const response = await groq.chat.completions.create({
+    const client = getGroqClient()
+
+    const response = await client.chat.completions.create({
       messages,
       model,
       temperature,

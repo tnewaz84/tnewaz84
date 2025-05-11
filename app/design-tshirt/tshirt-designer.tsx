@@ -10,7 +10,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Info, Eye, Edit2, ChevronLeft, Plus, LayersIcon } from "lucide-react"
 import { useMediaQuery } from "@/hooks/use-media-query"
-import { loadHtml2Canvas } from "@/app/components/dynamic-imports"
 
 // Add the sample design image to the TSHIRT_COLORS array
 const TSHIRT_COLORS = [
@@ -186,8 +185,8 @@ export default function TShirtDesigner() {
     setError(null)
 
     try {
-      // Dynamically import html2canvas using our client-side helper
-      const html2canvasModule = await loadHtml2Canvas().catch((err) => {
+      // Dynamically import html2canvas
+      const html2canvasModule = await import("html2canvas").catch((err) => {
         console.error("Failed to load html2canvas:", err)
         throw new Error("Could not load the design tool. Using fallback method.")
       })

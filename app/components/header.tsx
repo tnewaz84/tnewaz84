@@ -72,7 +72,7 @@ export default function Header() {
     { href: "/streaming", label: "Streaming" },
     { href: "/ninjam", label: "Ninjam" },
     { href: "/#contact", label: "Contact" },
-  ]
+  ].filter((item) => item.href !== "#featured-projects")
 
   return (
     <header
