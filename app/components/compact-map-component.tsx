@@ -1,90 +1,59 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef } from "react"
+import L from "leaflet"
+import "leaflet/dist/leaflet.css"
 
-// Default center
-const defaultCenter = {
-  lat: 20,
-  lng: 0,
+interface CompactMapProps {
+  lat: number
+  lng: number
+  zoom?: number
+  title?: string
 }
 
-interface CompactMapComponentProps {
-  locations: any[]
-}
-
-export default function CompactMapComponent({ locations }: CompactMapComponentProps) {
-  const [mapLoaded, setMapLoaded] = useState(false)
+export default function CompactMapComponent({ lat, lng, zoom = 13, title }: CompactMapProps) {
+  const mapRef = useRef<HTMLDivElement>(null)
+  const mapInstanceRef = useRef<L.Map | null>(null)
 
   useEffect(() => {
-    // Dynamically import Leaflet only on client-side
-    const loadMap = async () => {
-      try {
-        // Import Leaflet and related modules
-        const L = (await import("leaflet")).default
-        await import("leaflet/dist/leaflet.css")
+    if (typeof window === "undefined") return
 
-        // Create custom icon
-        const customIcon = new L.Icon({
-          iconUrl: "/map-marker.png",
-          iconSize: [24, 24],
-          iconAnchor: [12, 24],
-          popupAnchor: [0, -24],
-        })
+    // Initialize map only if it hasn't been initialized yet
+    if (!mapInstanceRef.current && mapRef.current) {
+      // Create map instance
+      const map = L.map(mapRef.current).setView([lat, lng], zoom)
+      mapInstanceRef.current = map
 
-        // Make sure the map container exists
-        const mapContainer = document.getElementById("compact-map")
-        if (!mapContainer) return
+      // Add tile layer
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(map)
 
-        // Initialize map
-        const map = L.map("compact-map").setView([defaultCenter.lat, defaultCenter.lng], 2)
+      // Custom icon
+      const customIcon = L.icon({
+        iconUrl: "/map-marker.png",
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32],
+      })
 
-        // Add tile layer
-        L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-          attribution:
-            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-          maxZoom: 19,
-        }).addTo(map)
+      // Add marker
+      const marker = L.marker([lat, lng], { icon: customIcon }).addTo(map)
 
-        // Add markers for each location
-        locations.forEach((location) => {
-          const marker = L.marker([location.coordinates.lat, location.coordinates.lng], {
-            icon: customIcon,
-          }).addTo(map)
-
-          // Create popup content
-          const popupContent = document.createElement("div")
-          popupContent.innerHTML = `
-            <div class="p-2 max-w-xs">
-              <h3 class="font-bold">${location.city}</h3>
-              <p class="text-sm mb-2">${location.niche} Services</p>
-              <a 
-                href="/locations/${location.country}/${location.slug}"
-                class="text-blue-600 hover:underline text-sm flex items-center gap-1"
-              >
-                View Details
-              </a>
-            </div>
-          `
-
-          marker.bindPopup(popupContent)
-        })
-
-        setMapLoaded(true)
-      } catch (error) {
-        console.error("Error loading map:", error)
+      // Add popup if title is provided
+      if (title) {
+        marker.bindPopup(`<b>${title}</b>`).openPopup()
       }
     }
-
-    loadMap()
 
     // Cleanup function
     return () => {
-      const mapContainer = document.getElementById("compact-map")
-      if (mapContainer) {
-        mapContainer.innerHTML = ""
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove()
+        mapInstanceRef.current = null
       }
     }
-  }, [locations])
+  }, [lat, lng, zoom, title])
 
-  return <div id="compact-map" style={{ height: "100%", width: "100%" }}></div>
+  return <div ref={mapRef} className="w-full h-[300px] rounded-lg overflow-hidden" />
 }

@@ -1,11 +1,11 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import dynamic from "next/dynamic"
-import Link from "next/link"
+import { useEffect, useRef } from "react"
+import L from "leaflet"
+import "leaflet/dist/leaflet.css"
 import { Button } from "@/components/ui/button"
 import { MapPin } from "lucide-react"
-import { getAllLocationSlugs, getLocationData } from "../lib/location-data"
+import { locationData } from "../lib/location-data"
 
 // Location coordinates mapping
 const locationCoordinates: Record<string, { lat: number; lng: number }> = {
@@ -16,33 +16,51 @@ const locationCoordinates: Record<string, { lat: number; lng: number }> = {
   "new-york": { lat: 40.7128, lng: -74.006 },
 }
 
-// Dynamically import the compact map component with SSR disabled
-const CompactMapComponent = dynamic(() => import("./compact-map-component"), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-[400px] bg-gray-100 rounded-lg animate-pulse flex items-center justify-center">
-      <p className="text-gray-500">Loading map...</p>
-    </div>
-  ),
-})
-
 export default function GlobalPresenceMap() {
-  const [locations, setLocations] = useState<any[]>([])
+  const mapRef = useRef<HTMLDivElement>(null)
+  const mapInstanceRef = useRef<L.Map | null>(null)
 
   useEffect(() => {
-    // Get all location data
-    const locationSlugs = getAllLocationSlugs()
-    const locationsData = locationSlugs
-      .map(({ country, city }) => {
-        const locationData = getLocationData(country, city)
-        return {
-          ...locationData,
-          coordinates: locationCoordinates[city.toLowerCase()] || { lat: 0, lng: 0 },
-        }
-      })
-      .filter((location) => location !== undefined)
+    if (typeof window === "undefined") return
 
-    setLocations(locationsData)
+    // Initialize map only if it hasn't been initialized yet
+    if (!mapInstanceRef.current && mapRef.current) {
+      // Create map instance
+      const map = L.map(mapRef.current).setView([20, 0], 2)
+      mapInstanceRef.current = map
+
+      // Add tile layer
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(map)
+
+      // Custom icon
+      const customIcon = L.icon({
+        iconUrl: "/map-marker.png",
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32],
+      })
+
+      // Add markers for each location
+      locationData.forEach((location) => {
+        L.marker([location.lat, location.lng], { icon: customIcon })
+          .addTo(map)
+          .bindPopup(
+            `<b>${location.city}, ${location.country}</b><br>
+             ${location.clients} clients<br>
+             ${location.rankingImprovement}% avg. ranking improvement`,
+          )
+      })
+    }
+
+    // Cleanup function
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove()
+        mapInstanceRef.current = null
+      }
+    }
   }, [])
 
   return (
@@ -50,15 +68,15 @@ export default function GlobalPresenceMap() {
       <h2 className="text-2xl font-bold mb-4">Our Global Presence</h2>
 
       <div className="rounded-lg overflow-hidden border-2 border-primary/20 h-[400px]">
-        <CompactMapComponent locations={locations} />
+        <div ref={mapRef} className="w-full h-[400px] rounded-lg overflow-hidden" />
       </div>
 
       <div className="mt-4 flex justify-end">
-        <Link href="/locations">
+        <a href="/locations">
           <Button variant="outline" size="sm" className="flex items-center gap-2">
             <MapPin className="h-4 w-4" /> View All Locations
           </Button>
-        </Link>
+        </a>
       </div>
     </div>
   )

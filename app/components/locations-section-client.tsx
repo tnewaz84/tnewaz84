@@ -3,5 +3,9 @@
 import GlobalPresenceMap from "./global-presence-map"
 
 export default function LocationsSectionClient() {
-  return <GlobalPresenceMap />
+  return (
+    <div className="w-full">
+      <GlobalPresenceMap />
+    </div>
+  )
 }
