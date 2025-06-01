@@ -1,7 +1,16 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { MapPin } from "lucide-react"
-import LocationsSectionClient from "./locations-section-client"
+import dynamic from "next/dynamic"
+
+// Dynamically import the client component to avoid SSR issues with the map
+const LocationsSectionClient = dynamic(() => import("./locations-section-client"), {
+  loading: () => (
+    <div className="w-full h-[400px] bg-gray-100 rounded-lg animate-pulse flex items-center justify-center">
+      <p className="text-gray-500">Loading map...</p>
+    </div>
+  ),
+})
 
 export default function LocationsSection() {
   return (
