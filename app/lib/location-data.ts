@@ -331,3 +331,5 @@ export function getAllLocationSlugs(): { country: string; city: string }[] {
 
   return slugs
 }
+
+export { locationData }

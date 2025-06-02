@@ -4,8 +4,17 @@ import { useEffect, useRef } from "react"
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 import { Button } from "@/components/ui/button"
-import { MapPin } from "lucide-react"
-import { locationData } from "../lib/location-data"
+import { MapPin } from 'lucide-react'
+// import { locationData } from "../lib/location-data"
+
+// Create an array of location data for the map
+const mapLocations = [
+  { city: "Dhaka", country: "Bangladesh", lat: 23.8103, lng: 90.4125, clients: 45, rankingImprovement: 78 },
+  { city: "Jakarta", country: "Indonesia", lat: -6.2088, lng: 106.8456, clients: 32, rankingImprovement: 65 },
+  { city: "Lagos", country: "Nigeria", lat: 6.5244, lng: 3.3792, clients: 28, rankingImprovement: 82 },
+  { city: "Sydney", country: "Australia", lat: -33.8688, lng: 151.2093, clients: 53, rankingImprovement: 71 },
+  { city: "New York", country: "USA", lat: 40.7128, lng: -74.006, clients: 67, rankingImprovement: 85 },
+]
 
 // Location coordinates mapping
 const locationCoordinates: Record<string, { lat: number; lng: number }> = {
@@ -43,7 +52,7 @@ export default function GlobalPresenceMap() {
       })
 
       // Add markers for each location
-      locationData.forEach((location) => {
+      mapLocations.forEach((location) => {
         L.marker([location.lat, location.lng], { icon: customIcon })
           .addTo(map)
           .bindPopup(
