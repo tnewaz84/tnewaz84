@@ -4,10 +4,13 @@ import { useEffect, useRef } from "react"
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 import { Button } from "@/components/ui/button"
-import { MapPin } from 'lucide-react'
+import { MapPin } from "lucide-react"
+
+// Location coordinates mapping
+// Remove this line:
 // import { locationData } from "../lib/location-data"
 
-// Create an array of location data for the map
+// Keep the existing mapLocations array and use it instead:
 const mapLocations = [
   { city: "Dhaka", country: "Bangladesh", lat: 23.8103, lng: 90.4125, clients: 45, rankingImprovement: 78 },
   { city: "Jakarta", country: "Indonesia", lat: -6.2088, lng: 106.8456, clients: 32, rankingImprovement: 65 },
@@ -16,14 +19,14 @@ const mapLocations = [
   { city: "New York", country: "USA", lat: 40.7128, lng: -74.006, clients: 67, rankingImprovement: 85 },
 ]
 
-// Location coordinates mapping
-const locationCoordinates: Record<string, { lat: number; lng: number }> = {
-  dhaka: { lat: 23.8103, lng: 90.4125 },
-  jakarta: { lat: -6.2088, lng: 106.8456 },
-  lagos: { lat: 6.5244, lng: 3.3792 },
-  sydney: { lat: -33.8688, lng: 151.2093 },
-  "new-york": { lat: 40.7128, lng: -74.006 },
-}
+// Remove the unused locationCoordinates object since we're using the mapLocations array directly.
+// const locationCoordinates: Record<string, { lat: number; lng: number }> = {
+//   dhaka: { lat: 23.8103, lng: 90.4125 },
+//   jakarta: { lat: -6.2088, lng: 106.8456 },
+//   lagos: { lat: 6.5244, lng: 3.3792 },
+//   sydney: { lat: -33.8688, lng: 151.2093 },
+//   "new-york": { lat: 40.7128, lng: -74.006 },
+// }
 
 export default function GlobalPresenceMap() {
   const mapRef = useRef<HTMLDivElement>(null)
@@ -52,6 +55,9 @@ export default function GlobalPresenceMap() {
       })
 
       // Add markers for each location
+      // In the useEffect, change:
+      // locationData.forEach((location) => {
+      // to:
       mapLocations.forEach((location) => {
         L.marker([location.lat, location.lng], { icon: customIcon })
           .addTo(map)
