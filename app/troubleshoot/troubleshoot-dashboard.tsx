@@ -155,4 +155,5 @@ const TroubleshootDashboard = () => {
   )
 }
 
+export { TroubleshootDashboard }
 export default TroubleshootDashboard
