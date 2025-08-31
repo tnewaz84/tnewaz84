@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next"
 import { getAllLocationSlugs } from "./lib/location-data"
+import { BASE_URL } from "./lib/constants"
 
 // Helper function to format date consistently
 const formatDate = (date: Date = new Date()): string => {
@@ -13,14 +14,15 @@ const recentDate = new Date()
 recentDate.setDate(recentDate.getDate() - 7)
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tanvirnewaz.com"
+  const baseUrl = BASE_URL
 
-  // Get all location pages
-  const locationSlugs = getAllLocationSlugs()
-
-  // Fetch blog posts (assuming there's a function to get them)
-  // If you don't have this function, you can create a placeholder or remove this section
-  // const blogPosts = await getBlogPosts() // Uncomment and implement if you have this function
+  let locationSlugs: { country: string; city: string }[] = []
+  try {
+    locationSlugs = getAllLocationSlugs()
+  } catch (error) {
+    console.error("Error fetching location slugs:", error)
+    // Continue with empty array if there's an error
+  }
 
   // Main pages with high priority
   const mainPages = [
@@ -75,6 +77,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: formatDate(currentDate),
       changeFrequency: "weekly" as const,
       priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/stream-viewer`,
+      lastModified: formatDate(currentDate),
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/ninjam`,
+      lastModified: formatDate(currentDate),
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
     },
   ]
 
@@ -156,52 +170,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]
 
-  // Admin pages (typically not included in public sitemaps, but included here for completeness)
-  const adminPages = [
-    {
-      url: `${baseUrl}/admin`,
-      lastModified: formatDate(currentDate),
-      changeFrequency: "weekly" as const,
-      priority: 0.4,
-    },
-    {
-      url: `${baseUrl}/admin/cache`,
-      lastModified: formatDate(currentDate),
-      changeFrequency: "weekly" as const,
-      priority: 0.3,
-    },
-  ]
-
-  // Utility pages
-  const utilityPages = [
-    {
-      url: `${baseUrl}/redis-test`,
-      lastModified: formatDate(currentDate),
-      changeFrequency: "monthly" as const,
-      priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/stream-viewer`,
-      lastModified: formatDate(currentDate),
-      changeFrequency: "weekly" as const,
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/ninjam`,
-      lastModified: formatDate(currentDate),
-      changeFrequency: "weekly" as const,
-      priority: 0.6,
-    },
-  ]
-
   // Combine all pages
-  return [
-    ...mainPages,
-    ...servicePages,
-    ...locationPages,
-    ...forumPages,
-    ...policyPages,
-    ...adminPages,
-    ...utilityPages,
-  ]
+  return [...mainPages, ...servicePages, ...locationPages, ...forumPages, ...policyPages]
 }
