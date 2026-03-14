@@ -41,7 +41,7 @@ I am open to high-level discussions with visionary founders, institutional inves
 
 - 💼 **LinkedIn**: [linkedin.com/in/tanvir-newaz](https://www.linkedin.com/in/tanvir-newaz)
 - 📧 **Direct Protocol**: [tnewaz84@gmail.com](mailto:tnewaz84@gmail.com)
-- 🌍 **Venture Hub**: [absolutefloorsandmore.com](https://www.absolutefloorsandmore.com)
+- 🌐 **Intel Portal**: [tanvir-newaz.wiki](https://tanvir-newaz.wiki)
 
 ---
 *"Vision without systems is just a daydream. I build the systems."*
