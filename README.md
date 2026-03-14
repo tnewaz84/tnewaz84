@@ -28,13 +28,7 @@ Currently leading a portfolio of high-growth ventures, including **Absolute Floo
 
 ---
 
-## 📊 **Performance Metrics**
-<p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=tnewaz84&show_icons=true&theme=matrix&hide_border=true&count_private=true" alt="GitHub Stats" height="180px" />
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=tnewaz84&layout=compact&theme=matrix&hide_border=true" alt="Top Languages" height="180px" />
-</p>
 
----
 
 ## 🤝 **Strategic Collaboration**
 I am open to high-level discussions with visionary founders, institutional investors, and elite architects interested in building the next generation of industry-defining systems.
