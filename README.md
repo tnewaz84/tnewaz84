@@ -28,8 +28,6 @@ Currently leading a portfolio of high-growth ventures, including **Absolute Floo
 
 ---
 
-
-
 ## 🤝 **Strategic Collaboration**
 I am open to high-level discussions with visionary founders, institutional investors, and elite architects interested in building the next generation of industry-defining systems.
 
