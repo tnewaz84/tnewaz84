@@ -24,7 +24,7 @@ Architecting the future of scalable business. I specialize in building autonomou
 ---
 
 ## 🚀 **Current Focus**
-Currently leading a portfolio of high-growth ventures, including **Absolute Floors & More** and the **Sudo Random OS**, toward aggressive scaling and 10-figure valuations. My focus is on the intersection of AI-driven operational efficiency and total market capture.
+Currently leading a portfolio of high-growth ventures, including Grayline Solutions LLC. V-22-Labs and the **Sudo Random OS**, toward aggressive scaling and 10-figure valuations. My focus is on the intersection of AI-driven operational efficiency and total market capture.
 
 ---
 
